@@ -22,7 +22,31 @@ let currentScreenIndex = 0;
 const BIRTHDAY = window.BIRTHDAY_DATA || {};
 
 const SECRET_CODE = BIRTHDAY.secret_code || "223010";
+function applyBirthdayData() {
+  const birthday = window.BIRTHDAY_DATA;
 
+  if (!birthday) return;
+
+  // Page title
+  document.title = `Happy Birthday ${birthday.birthday_name || ""} ❤️`;
+
+  // Replace birthday name wherever these elements exist
+  document.querySelectorAll("[data-birthday-name]").forEach(element => {
+    element.textContent = birthday.birthday_name || "";
+  });
+
+  // Final message
+  const finalMessage = document.getElementById("finalMessage");
+  if (finalMessage && birthday.final_message) {
+    finalMessage.textContent = birthday.final_message;
+  }
+
+  // Letter
+  const letterContent = document.getElementById("husbandLetterContent");
+  if (letterContent && birthday.letter) {
+    letterContent.innerHTML = birthday.letter.replace(/\n/g, "<br>");
+  }
+}
 let puzzlePieces = [];
 let selectedPuzzlePiece = null;
 

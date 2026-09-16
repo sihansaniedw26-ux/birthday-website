@@ -902,9 +902,59 @@
     </section>
 
   </main>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-<script src="script.js"></script>
+
+<script>
+(async () => {
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+
+    const slug =
+        new URLSearchParams(window.location.search).get("slug") ||
+        (pathParts[0] === "birthday" ? pathParts[1] : null);
+
+    // Normal homepage
+    if (!slug) {
+        const script = document.createElement("script");
+        script.src = "script.js";
+        document.body.appendChild(script);
+        return;
+    }
+
+    // Load birthday data from Supabase
+    const { data, error } = await supabaseClient.rpc(
+        "get_birthday_site",
+        {
+            site_slug: slug
+        }
+    );
+
+    // Birthday page not found
+    if (error || !data || data.length === 0) {
+        document.body.innerHTML = `
+            <div style="
+                text-align:center;
+                padding:80px 20px;
+                font-family:sans-serif;
+            ">
+                <h1>Birthday page not found 💔</h1>
+                <p>This birthday page does not exist.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Make birthday data available to script.js
+    window.BIRTHDAY_DATA = data[0];
+
+    // Load the original birthday journey
+    const script = document.createElement("script");
+    script.src = "script.js";
+    document.body.appendChild(script);
+
+})();
+</script>
 
 </body>
 </html>

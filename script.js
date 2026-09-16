@@ -973,6 +973,7 @@ function restartJourney() {
 ===================================================== */
 
 window.addEventListener("load", () => {
+  applyBirthdayData();
   createParticles();
   updateJourneyProgress();
   initJigsaw();

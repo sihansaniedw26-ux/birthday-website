@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard - Happy Birthday Patiyoo</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #160d1d;
+      color: white;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 40px auto;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 7px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 13px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #d25353;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #555;
+      margin-left: 10px;
+    }
+
+    #message {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h1>Birthday Website Dashboard ❤️</h1>
+
+      <p id="userEmail"></p>
+
+      <label>Birthday Name</label>
+      <input
+        type="text"
+        id="birthdayName"
+        placeholder="Example: Amma"
+      >
+
+      <label>Birthday Date</label>
+      <input
+        type="date"
+        id="birthdayDate"
+      >
+
+      <label>Secret Code</label>
+      <input
+        type="text"
+        id="secretCode"
+        placeholder="Example: 223010"
+      >
+
+      <label>Final Message</label>
+      <textarea
+        id="finalMessage"
+        placeholder="Write your final birthday message..."
+      ></textarea>
+
+      <button onclick="saveBirthdaySite()">
+        Save Changes
+      </button>
+
+      <button
+        class="logout"
+        onclick="logout()"
+      >
+        Logout
+      </button>
+
+      <p id="message"></p>
+
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+
+    let currentUser = null;
+
+    async function checkUser() {
+
+      const {
+        data: {
+          user
+        }
+      } = await supabaseClient.auth.getUser();
+
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      currentUser = user;
+
+      document.getElementById("userEmail").textContent =
+        "Logged in as: " + user.email;
+
+      loadBirthdaySite();
+    }
+
+
+    async function loadBirthdaySite() {
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("birthday_sites")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        document.getElementById("message").textContent =
+          error.message;
+        return;
+      }
+
+      if (!data) {
+        return;
+      }
+
+      document.getElementById("birthdayName").value =
+        data.birthday_name || "";
+
+      document.getElementById("birthdayDate").value =
+        data.birthday_date || "";
+
+      document.getElementById("secretCode").value =
+        data.secret_code || "";
+
+      document.getElementById("finalMessage").value =
+        data.final_message || "";
+    }
+
+
+    async function saveBirthdaySite() {
+
+      if (!currentUser) {
+        return;
+      }
+
+      const birthdayName =
+        document.getElementById("birthdayName").value;
+
+      const birthdayDate =
+        document.getElementById("birthdayDate").value;
+
+      const secretCode =
+        document.getElementById("secretCode").value;
+
+      const finalMessage =
+        document.getElementById("finalMessage").value;
+
+      const message =
+        document.getElementById("message");
+
+
+      const {
+        data: existingSite,
+        error: findError
+      } = await supabaseClient
+        .from("birthday_sites")
+        .select("id")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+
+      if (findError) {
+        message.textContent = findError.message;
+        return;
+      }
+
+
+      let result;
+
+
+      if (existingSite) {
+
+        result = await supabaseClient
+          .from("birthday_sites")
+          .update({
+            birthday_name: birthdayName,
+            birthday_date: birthdayDate || null,
+            secret_code: secretCode,
+            final_message: finalMessage
+          })
+          .eq("id", existingSite.id);
+
+      } else {
+
+        result = await supabaseClient
+          .from("birthday_sites")
+          .insert({
+            user_id: currentUser.id,
+            birthday_name: birthdayName,
+            birthday_date: birthdayDate || null,
+            secret_code: secretCode,
+            final_message: finalMessage
+          });
+
+      }
+
+
+      if (result.error) {
+
+        message.textContent =
+          result.error.message;
+
+        return;
+      }
+
+
+      message.textContent =
+        "Saved successfully! ❤️";
+
+    }
+
+
+    async function logout() {
+
+      await supabaseClient.auth.signOut();
+
+      window.location.href = "login.html";
+
+    }
+
+
+    checkUser();
+
+  </script>
+
+</body>
+</html>

@@ -3,59 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Birthday Dashboard</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #fff5f5;
       margin: 0;
-      padding: 30px;
+      padding: 30px 15px;
+      font-family: Arial, sans-serif;
+      background: #fff5f7;
+      color: #333;
     }
 
     .container {
-      max-width: 700px;
+      max-width: 750px;
       margin: auto;
       background: white;
       padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-radius: 24px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
     }
 
     h1 {
+      margin-top: 0;
       color: #9e3b3b;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin-top: 30px;
+      padding: 22px;
+      border-radius: 18px;
+      background: #fff8f9;
+      border: 1px solid #f5dddd;
+    }
+
+    .section h2 {
+      margin-top: 0;
+      color: #9e3b3b;
+      font-size: 20px;
     }
 
     label {
       display: block;
       margin-top: 18px;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       font-weight: bold;
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
+      padding: 13px;
       border: 1px solid #ddd;
-      border-radius: 10px;
+      border-radius: 11px;
       font-size: 16px;
+      background: white;
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 130px;
       resize: vertical;
+      line-height: 1.6;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .theme-option {
+      border: 2px solid #ddd;
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      background: white;
+      transition: 0.2s;
+    }
+
+    .theme-option:hover {
+      transform: translateY(-2px);
+    }
+
+    .theme-option input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .theme-preview {
+      height: 35px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .pink {
+      background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+    }
+
+    .purple {
+      background: linear-gradient(135deg, #d8b4fe, #9333ea);
+    }
+
+    .blue {
+      background: linear-gradient(135deg, #93c5fd, #2563eb);
+    }
+
+    .gold {
+      background: linear-gradient(135deg, #fde68a, #d97706);
+    }
+
+    .green {
+      background: linear-gradient(135deg, #86efac, #16a34a);
+    }
+
+    .font-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .font-option {
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .font-option input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .font-romantic {
+      font-family: Georgia, serif;
+    }
+
+    .font-modern {
+      font-family: Arial, sans-serif;
+    }
+
+    .font-elegant {
+      font-family: "Trebuchet MS", sans-serif;
+    }
+
+    .font-playful {
+      font-family: "Comic Sans MS", cursive;
+    }
+
+    .photo-info {
+      padding: 12px;
+      background: #fff0f3;
+      border-radius: 10px;
+      margin-top: 10px;
+      color: #777;
+    }
+
+    #photoPreview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #photoPreview img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
     }
 
     button {
-      margin-top: 20px;
-      padding: 12px 20px;
+      padding: 13px 20px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 16px;
     }
@@ -63,25 +207,26 @@
     #saveBtn {
       background: #9e3b3b;
       color: white;
+      flex: 1;
     }
 
     #logoutBtn {
       background: #eee;
       color: #333;
-      margin-left: 10px;
     }
 
     #status {
       margin-top: 20px;
+      text-align: center;
       font-weight: bold;
     }
 
     #publicLink {
       display: none;
-      margin-top: 20px;
-      padding: 15px;
+      margin-top: 25px;
+      padding: 18px;
       background: #fff0f0;
-      border-radius: 10px;
+      border-radius: 12px;
       word-break: break-all;
     }
 
@@ -89,157 +234,701 @@
       color: #9e3b3b;
       font-weight: bold;
     }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .theme-grid,
+      .font-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #photoPreview {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>🎂 Birthday Website Dashboard</h1>
+<div class="container">
 
-    <p id="userEmail"></p>
+  <h1>🎂 Birthday Website</h1>
 
-    <label for="birthdayName">Birthday Name</label>
-    <input id="birthdayName" type="text" placeholder="Example: Amma">
+  <p class="subtitle">
+    Create your beautiful birthday surprise ❤️
+  </p>
 
-    <label for="birthdayDate">Birthday Date</label>
-    <input id="birthdayDate" type="date">
+  <p id="userEmail"></p>
 
-    <label for="secretCode">Secret Code</label>
-    <input id="secretCode" type="text" placeholder="Example: 223010">
 
-    <label for="finalMessage">Final Message</label>
-    <textarea id="finalMessage" placeholder="Write the final birthday message..."></textarea>
+  <!-- BASIC DETAILS -->
+  <div class="section">
 
-    <button id="saveBtn">Save Changes ❤️</button>
-    <button id="logoutBtn">Logout</button>
+    <h2>🎂 Birthday Details</h2>
 
-    <div id="status"></div>
+    <label for="birthdayName">
+      Birthday Name
+    </label>
 
-    <div id="publicLink">
-      🎉 Your birthday website:
-      <br><br>
-      <a id="birthdayUrl" href="#" target="_blank"></a>
-    </div>
+    <input
+      id="birthdayName"
+      type="text"
+      placeholder="Example: Amma"
+    >
+
+
+    <label for="birthdayDate">
+      Birthday Date
+    </label>
+
+    <input
+      id="birthdayDate"
+      type="date"
+    >
+
+
+    <label for="secretCode">
+      Secret Code
+    </label>
+
+    <input
+      id="secretCode"
+      type="text"
+      placeholder="Example: 223010"
+    >
+
+
+    <label for="finalMessage">
+      Final Message
+    </label>
+
+    <textarea
+      id="finalMessage"
+      placeholder="Write the final birthday message..."
+    ></textarea>
+
   </div>
 
-  <script>
-    const birthdayName = document.getElementById("birthdayName");
-    const birthdayDate = document.getElementById("birthdayDate");
-    const secretCode = document.getElementById("secretCode");
-    const finalMessage = document.getElementById("finalMessage");
-    const status = document.getElementById("status");
-    const publicLink = document.getElementById("publicLink");
-    const birthdayUrl = document.getElementById("birthdayUrl");
 
-    let currentUser = null;
-    let currentSite = null;
+  <!-- LETTER -->
+  <div class="section">
 
-    function createSlug() {
-      const random = Math.random().toString(36).substring(2, 8);
-      return "birthday-" + random;
+    <h2>💌 Birthday Letter</h2>
+
+    <p>
+      Write the special letter that will appear at the end of the journey.
+    </p>
+
+    <textarea
+      id="letter"
+      placeholder="Write your birthday letter here..."
+    ></textarea>
+
+  </div>
+
+
+  <!-- COLOR THEME -->
+  <div class="section">
+
+    <h2>🎨 Choose Color Theme</h2>
+
+    <div class="theme-grid">
+
+      <label class="theme-option">
+        <input
+          type="radio"
+          name="theme"
+          value="pink"
+          checked
+        >
+        💗 Pink
+        <div class="theme-preview pink"></div>
+      </label>
+
+
+      <label class="theme-option">
+        <input
+          type="radio"
+          name="theme"
+          value="purple"
+        >
+        💜 Purple
+        <div class="theme-preview purple"></div>
+      </label>
+
+
+      <label class="theme-option">
+        <input
+          type="radio"
+          name="theme"
+          value="blue"
+        >
+        💙 Blue
+        <div class="theme-preview blue"></div>
+      </label>
+
+
+      <label class="theme-option">
+        <input
+          type="radio"
+          name="theme"
+          value="gold"
+        >
+        💛 Gold
+        <div class="theme-preview gold"></div>
+      </label>
+
+
+      <label class="theme-option">
+        <input
+          type="radio"
+          name="theme"
+          value="green"
+        >
+        💚 Green
+        <div class="theme-preview green"></div>
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- FONT -->
+  <div class="section">
+
+    <h2>✍️ Choose Font</h2>
+
+    <div class="font-grid">
+
+      <label class="font-option font-romantic">
+        <input
+          type="radio"
+          name="font"
+          value="romantic"
+          checked
+        >
+        Romantic
+      </label>
+
+
+      <label class="font-option font-modern">
+        <input
+          type="radio"
+          name="font"
+          value="modern"
+        >
+        Modern
+      </label>
+
+
+      <label class="font-option font-elegant">
+        <input
+          type="radio"
+          name="font"
+          value="elegant"
+        >
+        Elegant
+      </label>
+
+
+      <label class="font-option font-playful">
+        <input
+          type="radio"
+          name="font"
+          value="playful"
+        >
+        Playful
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- PHOTOS -->
+  <div class="section">
+
+    <h2>📸 Your Photos</h2>
+
+    <p>
+      Choose up to <strong>15 photos</strong> for the birthday website.
+    </p>
+
+    <input
+      id="photoUpload"
+      type="file"
+      accept="image/*"
+      multiple
+    >
+
+    <div class="photo-info">
+      📷 Maximum 15 photos
+    </div>
+
+    <div id="photoPreview"></div>
+
+  </div>
+
+
+  <!-- BUTTONS -->
+  <div class="buttons">
+
+    <button id="saveBtn">
+      Save Changes ❤️
+    </button>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
+
+  </div>
+
+
+  <div id="status"></div>
+
+
+  <!-- PUBLIC LINK -->
+  <div id="publicLink">
+
+    🎉 Your birthday website:
+
+    <br><br>
+
+    <a
+      id="birthdayUrl"
+      href="#"
+      target="_blank"
+    ></a>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const birthdayName =
+  document.getElementById("birthdayName");
+
+const birthdayDate =
+  document.getElementById("birthdayDate");
+
+const secretCode =
+  document.getElementById("secretCode");
+
+const finalMessage =
+  document.getElementById("finalMessage");
+
+const letter =
+  document.getElementById("letter");
+
+const status =
+  document.getElementById("status");
+
+const publicLink =
+  document.getElementById("publicLink");
+
+const birthdayUrl =
+  document.getElementById("birthdayUrl");
+
+const photoUpload =
+  document.getElementById("photoUpload");
+
+const photoPreview =
+  document.getElementById("photoPreview");
+
+
+let currentUser = null;
+let currentSite = null;
+
+
+/* CREATE SLUG */
+
+function createSlug() {
+
+  const random =
+    Math.random()
+      .toString(36)
+      .substring(2, 8);
+
+  return "birthday-" + random;
+}
+
+
+/* GET SELECTED THEME */
+
+function getSelectedTheme() {
+
+  const selected =
+    document.querySelector(
+      'input[name="theme"]:checked'
+    );
+
+  return selected
+    ? selected.value
+    : "pink";
+}
+
+
+/* GET SELECTED FONT */
+
+function getSelectedFont() {
+
+  const selected =
+    document.querySelector(
+      'input[name="font"]:checked'
+    );
+
+  return selected
+    ? selected.value
+    : "romantic";
+}
+
+
+/* SET THEME */
+
+function setSelectedTheme(theme) {
+
+  if (!theme) return;
+
+  const radio =
+    document.querySelector(
+      'input[name="theme"][value="' + theme + '"]'
+    );
+
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+
+/* SET FONT */
+
+function setSelectedFont(font) {
+
+  if (!font) return;
+
+  const radio =
+    document.querySelector(
+      'input[name="font"][value="' + font + '"]'
+    );
+
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+
+/* SHOW PUBLIC LINK */
+
+function showPublicLink(slug) {
+
+  const url =
+    window.location.origin +
+    "/birthday/" +
+    slug;
+
+  birthdayUrl.href = url;
+
+  birthdayUrl.textContent = url;
+
+  publicLink.style.display = "block";
+}
+
+
+/* PHOTO PREVIEW */
+
+photoUpload.addEventListener(
+  "change",
+  function () {
+
+    photoPreview.innerHTML = "";
+
+    const files =
+      Array.from(photoUpload.files);
+
+    if (files.length > 15) {
+
+      status.textContent =
+        "Please choose maximum 15 photos.";
+
+      photoUpload.value = "";
+
+      return;
     }
 
-    async function loadDashboard() {
-      const { data: { user }, error } = await supabaseClient.auth.getUser();
+    files.forEach(function(file) {
 
-      if (error || !user) {
-        window.location.href = "login.html";
-        return;
-      }
+      const reader =
+        new FileReader();
 
-      currentUser = user;
+      reader.onload = function(event) {
 
-      document.getElementById("userEmail").textContent =
-        "Logged in as: " + user.email;
+        const img =
+          document.createElement("img");
 
-      const { data, error: loadError } = await supabaseClient
-        .from("birthday_sites")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        img.src =
+          event.target.result;
 
-      if (loadError) {
-        status.textContent = "Error loading data: " + loadError.message;
-        return;
-      }
+        photoPreview.appendChild(img);
 
-      if (data) {
-        currentSite = data;
-
-        birthdayName.value = data.birthday_name || "";
-        birthdayDate.value = data.birthday_date || "";
-        secretCode.value = data.secret_code || "";
-        finalMessage.value = data.final_message || "";
-
-        if (data.slug) {
-          showPublicLink(data.slug);
-        }
-      }
-    }
-
-    function showPublicLink(slug) {
-      const url =
-        window.location.origin + "/birthday/" + slug;
-
-      birthdayUrl.href = url;
-      birthdayUrl.textContent = url;
-      publicLink.style.display = "block";
-    }
-
-    document.getElementById("saveBtn").addEventListener("click", async () => {
-      if (!currentUser) return;
-
-      status.textContent = "Saving...";
-
-      const siteData = {
-        user_id: currentUser.id,
-        birthday_name: birthdayName.value.trim(),
-        birthday_date: birthdayDate.value || null,
-        secret_code: secretCode.value.trim(),
-        final_message: finalMessage.value.trim()
       };
 
-      let result;
+      reader.readAsDataURL(file);
 
-      if (currentSite) {
-        result = await supabaseClient
+    });
+
+  }
+);
+
+
+/* LOAD DASHBOARD */
+
+async function loadDashboard() {
+
+  const {
+    data: { user },
+    error
+  } =
+    await supabaseClient.auth.getUser();
+
+
+  if (error || !user) {
+
+    window.location.href =
+      "login.html";
+
+    return;
+  }
+
+
+  currentUser = user;
+
+
+  document.getElementById(
+    "userEmail"
+  ).textContent =
+    "Logged in as: " + user.email;
+
+
+  const {
+    data,
+    error: loadError
+  } =
+    await supabaseClient
+      .from("birthday_sites")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+
+  if (loadError) {
+
+    status.textContent =
+      "Error loading data: " +
+      loadError.message;
+
+    return;
+  }
+
+
+  if (data) {
+
+    currentSite = data;
+
+
+    birthdayName.value =
+      data.birthday_name || "";
+
+
+    birthdayDate.value =
+      data.birthday_date || "";
+
+
+    secretCode.value =
+      data.secret_code || "";
+
+
+    finalMessage.value =
+      data.final_message || "";
+
+
+    letter.value =
+      data.letter || "";
+
+
+    if (data.settings) {
+
+      setSelectedTheme(
+        data.settings.theme
+      );
+
+      setSelectedFont(
+        data.settings.font
+      );
+
+    }
+
+
+    if (data.slug) {
+
+      showPublicLink(
+        data.slug
+      );
+
+    }
+
+  }
+
+}
+
+
+/* SAVE */
+
+document.getElementById(
+  "saveBtn"
+).addEventListener(
+  "click",
+  async function () {
+
+    if (!currentUser) return;
+
+
+    status.textContent =
+      "Saving...";
+
+
+    const settings = {
+
+      theme:
+        getSelectedTheme(),
+
+      font:
+        getSelectedFont()
+
+    };
+
+
+    const siteData = {
+
+      user_id:
+        currentUser.id,
+
+      birthday_name:
+        birthdayName.value.trim(),
+
+      birthday_date:
+        birthdayDate.value || null,
+
+      secret_code:
+        secretCode.value.trim(),
+
+      final_message:
+        finalMessage.value.trim(),
+
+      letter:
+        letter.value.trim(),
+
+      settings:
+        settings
+
+    };
+
+
+    let result;
+
+
+    if (currentSite) {
+
+      result =
+        await supabaseClient
           .from("birthday_sites")
           .update(siteData)
-          .eq("id", currentSite.id)
+          .eq(
+            "id",
+            currentSite.id
+          )
           .select()
           .single();
-      } else {
-        siteData.slug = createSlug();
 
-        result = await supabaseClient
+    } else {
+
+      siteData.slug =
+        createSlug();
+
+
+      result =
+        await supabaseClient
           .from("birthday_sites")
           .insert(siteData)
           .select()
           .single();
-      }
 
-      if (result.error) {
-        status.textContent = "Error: " + result.error.message;
-        return;
-      }
+    }
 
-      currentSite = result.data;
 
-      status.textContent = "Saved successfully! ❤️";
+    if (result.error) {
 
-      if (currentSite.slug) {
-        showPublicLink(currentSite.slug);
-      }
-    });
+      status.textContent =
+        "Error: " +
+        result.error.message;
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await supabaseClient.auth.signOut();
-      window.location.href = "login.html";
-    });
+      return;
 
-    loadDashboard();
-  </script>
+    }
+
+
+    currentSite =
+      result.data;
+
+
+    status.textContent =
+      "Saved successfully! ❤️";
+
+
+    if (currentSite.slug) {
+
+      showPublicLink(
+        currentSite.slug
+      );
+
+    }
+
+  }
+);
+
+
+/* LOGOUT */
+
+document.getElementById(
+  "logoutBtn"
+).addEventListener(
+  "click",
+  async function () {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "login.html";
+
+  }
+);
+
+
+/* START */
+
+loadDashboard();
+
+</script>
 
 </body>
 </html>

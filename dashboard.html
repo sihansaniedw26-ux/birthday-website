@@ -3,48 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Dashboard</title>
 
-  <title>Dashboard - Happy Birthday Patiyoo</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
 
   <style>
     body {
-      margin: 0;
-      padding: 20px;
       font-family: Arial, sans-serif;
-      background: #160d1d;
-      color: white;
+      background: #fff5f5;
+      margin: 0;
+      padding: 30px;
     }
 
     .container {
-      width: 100%;
       max-width: 700px;
-      margin: 40px auto;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.1);
+      margin: auto;
+      background: white;
       padding: 30px;
       border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     h1 {
-      margin-top: 0;
+      color: #9e3b3b;
     }
 
     label {
       display: block;
       margin-top: 18px;
-      margin-bottom: 7px;
+      margin-bottom: 6px;
+      font-weight: bold;
     }
 
     input,
     textarea {
       width: 100%;
-      padding: 13px;
       box-sizing: border-box;
-      border: none;
+      padding: 12px;
+      border: 1px solid #ddd;
       border-radius: 10px;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     textarea {
@@ -53,23 +52,42 @@
     }
 
     button {
-      padding: 13px 20px;
       margin-top: 20px;
+      padding: 12px 20px;
       border: none;
       border-radius: 10px;
-      background: #d25353;
-      color: white;
-      font-size: 16px;
       cursor: pointer;
+      font-size: 16px;
     }
 
-    .logout {
-      background: #555;
+    #saveBtn {
+      background: #9e3b3b;
+      color: white;
+    }
+
+    #logoutBtn {
+      background: #eee;
+      color: #333;
       margin-left: 10px;
     }
 
-    #message {
-      margin-top: 15px;
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #publicLink {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff0f0;
+      border-radius: 10px;
+      word-break: break-all;
+    }
+
+    #publicLink a {
+      color: #9e3b3b;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -77,72 +95,55 @@
 <body>
 
   <div class="container">
+    <h1>🎂 Birthday Website Dashboard</h1>
 
-    <div class="card">
+    <p id="userEmail"></p>
 
-      <h1>Birthday Website Dashboard ❤️</h1>
+    <label for="birthdayName">Birthday Name</label>
+    <input id="birthdayName" type="text" placeholder="Example: Amma">
 
-      <p id="userEmail"></p>
+    <label for="birthdayDate">Birthday Date</label>
+    <input id="birthdayDate" type="date">
 
-      <label>Birthday Name</label>
-      <input
-        type="text"
-        id="birthdayName"
-        placeholder="Example: Amma"
-      >
+    <label for="secretCode">Secret Code</label>
+    <input id="secretCode" type="text" placeholder="Example: 223010">
 
-      <label>Birthday Date</label>
-      <input
-        type="date"
-        id="birthdayDate"
-      >
+    <label for="finalMessage">Final Message</label>
+    <textarea id="finalMessage" placeholder="Write the final birthday message..."></textarea>
 
-      <label>Secret Code</label>
-      <input
-        type="text"
-        id="secretCode"
-        placeholder="Example: 223010"
-      >
+    <button id="saveBtn">Save Changes ❤️</button>
+    <button id="logoutBtn">Logout</button>
 
-      <label>Final Message</label>
-      <textarea
-        id="finalMessage"
-        placeholder="Write your final birthday message..."
-      ></textarea>
+    <div id="status"></div>
 
-      <button onclick="saveBirthdaySite()">
-        Save Changes
-      </button>
-
-      <button
-        class="logout"
-        onclick="logout()"
-      >
-        Logout
-      </button>
-
-      <p id="message"></p>
-
+    <div id="publicLink">
+      🎉 Your birthday website:
+      <br><br>
+      <a id="birthdayUrl" href="#" target="_blank"></a>
     </div>
-
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js"></script>
-
   <script>
+    const birthdayName = document.getElementById("birthdayName");
+    const birthdayDate = document.getElementById("birthdayDate");
+    const secretCode = document.getElementById("secretCode");
+    const finalMessage = document.getElementById("finalMessage");
+    const status = document.getElementById("status");
+    const publicLink = document.getElementById("publicLink");
+    const birthdayUrl = document.getElementById("birthdayUrl");
 
     let currentUser = null;
+    let currentSite = null;
 
-    async function checkUser() {
+    function createSlug() {
+      const random = Math.random().toString(36).substring(2, 8);
+      return "birthday-" + random;
+    }
 
-      const {
-        data: {
-          user
-        }
-      } = await supabaseClient.auth.getUser();
+    async function loadDashboard() {
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
 
-      if (!user) {
+      if (error || !user) {
         window.location.href = "login.html";
         return;
       }
@@ -152,139 +153,92 @@
       document.getElementById("userEmail").textContent =
         "Logged in as: " + user.email;
 
-      loadBirthdaySite();
-    }
-
-
-    async function loadBirthdaySite() {
-
-      const {
-        data,
-        error
-      } = await supabaseClient
+      const { data, error: loadError } = await supabaseClient
         .from("birthday_sites")
         .select("*")
-        .eq("user_id", currentUser.id)
+        .eq("user_id", user.id)
         .maybeSingle();
 
-      if (error) {
-        document.getElementById("message").textContent =
-          error.message;
+      if (loadError) {
+        status.textContent = "Error loading data: " + loadError.message;
         return;
       }
 
-      if (!data) {
-        return;
+      if (data) {
+        currentSite = data;
+
+        birthdayName.value = data.birthday_name || "";
+        birthdayDate.value = data.birthday_date || "";
+        secretCode.value = data.secret_code || "";
+        finalMessage.value = data.final_message || "";
+
+        if (data.slug) {
+          showPublicLink(data.slug);
+        }
       }
-
-      document.getElementById("birthdayName").value =
-        data.birthday_name || "";
-
-      document.getElementById("birthdayDate").value =
-        data.birthday_date || "";
-
-      document.getElementById("secretCode").value =
-        data.secret_code || "";
-
-      document.getElementById("finalMessage").value =
-        data.final_message || "";
     }
 
+    function showPublicLink(slug) {
+      const url =
+        window.location.origin + "/birthday/" + slug;
 
-    async function saveBirthdaySite() {
+      birthdayUrl.href = url;
+      birthdayUrl.textContent = url;
+      publicLink.style.display = "block";
+    }
 
-      if (!currentUser) {
-        return;
-      }
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      if (!currentUser) return;
 
-      const birthdayName =
-        document.getElementById("birthdayName").value;
+      status.textContent = "Saving...";
 
-      const birthdayDate =
-        document.getElementById("birthdayDate").value;
-
-      const secretCode =
-        document.getElementById("secretCode").value;
-
-      const finalMessage =
-        document.getElementById("finalMessage").value;
-
-      const message =
-        document.getElementById("message");
-
-
-      const {
-        data: existingSite,
-        error: findError
-      } = await supabaseClient
-        .from("birthday_sites")
-        .select("id")
-        .eq("user_id", currentUser.id)
-        .maybeSingle();
-
-
-      if (findError) {
-        message.textContent = findError.message;
-        return;
-      }
-
+      const siteData = {
+        user_id: currentUser.id,
+        birthday_name: birthdayName.value.trim(),
+        birthday_date: birthdayDate.value || null,
+        secret_code: secretCode.value.trim(),
+        final_message: finalMessage.value.trim()
+      };
 
       let result;
 
-
-      if (existingSite) {
-
+      if (currentSite) {
         result = await supabaseClient
           .from("birthday_sites")
-          .update({
-            birthday_name: birthdayName,
-            birthday_date: birthdayDate || null,
-            secret_code: secretCode,
-            final_message: finalMessage
-          })
-          .eq("id", existingSite.id);
-
+          .update(siteData)
+          .eq("id", currentSite.id)
+          .select()
+          .single();
       } else {
+        siteData.slug = createSlug();
 
         result = await supabaseClient
           .from("birthday_sites")
-          .insert({
-            user_id: currentUser.id,
-            birthday_name: birthdayName,
-            birthday_date: birthdayDate || null,
-            secret_code: secretCode,
-            final_message: finalMessage
-          });
-
+          .insert(siteData)
+          .select()
+          .single();
       }
 
-
       if (result.error) {
-
-        message.textContent =
-          result.error.message;
-
+        status.textContent = "Error: " + result.error.message;
         return;
       }
 
+      currentSite = result.data;
 
-      message.textContent =
-        "Saved successfully! ❤️";
+      status.textContent = "Saved successfully! ❤️";
 
-    }
+      if (currentSite.slug) {
+        showPublicLink(currentSite.slug);
+      }
+    });
 
-
-    async function logout() {
-
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
       await supabaseClient.auth.signOut();
-
       window.location.href = "login.html";
+    });
 
-    }
-
-
-    checkUser();
-
+    loadDashboard();
   </script>
 
 </body>

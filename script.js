@@ -11,17 +11,16 @@ const journey = [
   ["memories", "Our Memories"],
   ["hearts", "Catch Hearts"],
   ["wheel", "Love Wheel"],
-  ["husbandLetter", "Husband's Letter"],
-  ["daughterLetter", "Doni Letters"],
+  ["letter", "Special Letter"],
   ["final", "Birthday Reveal"]
 ];
 
 let currentScreenIndex = 0;
 
-// Birthday data loaded from Supabase
 const BIRTHDAY = window.BIRTHDAY_DATA || {};
 
-const SECRET_CODE = BIRTHDAY.secret_code || "223010";
+const SECRET_CODE =
+  BIRTHDAY.secret_code || "223010";
 
 let puzzlePieces = [];
 let selectedPuzzlePiece = null;
@@ -45,34 +44,45 @@ let wheelRotation = 0;
 ===================================================== */
 
 function applyBirthdayData() {
+
   const birthday = window.BIRTHDAY_DATA;
 
   if (!birthday) return;
 
-  const name = birthday.birthday_name || "Amma";
+  const name =
+    birthday.birthday_name || "Amma";
 
-  // Browser title
-  document.title = `Happy Birthday ${name} ❤️`;
+  document.title =
+    `Happy Birthday ${name} ❤️`;
 
-  // Birthday name elements
-  document.querySelectorAll("[data-birthday-name]").forEach(element => {
-    element.textContent = name;
-  });
+  document
+    .querySelectorAll("[data-birthday-name]")
+    .forEach(element => {
+      element.textContent = name;
+    });
 
-  // Final message
-  const finalMessage = document.getElementById("finalMessage");
+  const finalMessage =
+    document.getElementById("finalMessage");
 
   if (finalMessage && birthday.final_message) {
-    finalMessage.innerHTML = birthday.final_message.replace(/\n/g, "<br>");
+
+    finalMessage.innerHTML =
+      birthday.final_message
+        .replace(/\n/g, "<br>");
   }
 
-  // Letter from database
-  const husbandLetter = document.getElementById("husbandLetterContent");
+  /*
+     ONE LETTER ONLY
+  */
 
-  if (husbandLetter && birthday.letter) {
-    husbandLetter.innerHTML = `
-      <div class="letter-decoration">🌹</div>
+  const letterContent =
+    document.getElementById(
+      "dynamicLetterContent"
+    );
 
+  if (letterContent && birthday.letter) {
+
+    letterContent.innerHTML = `
       <p>
         ${birthday.letter.replace(/\n/g, "<br>")}
       </p>
@@ -80,12 +90,6 @@ function applyBirthdayData() {
       <p class="signature">
         Forever yours ❤️
       </p>
-
-      <button
-        class="main-btn"
-        onclick="goTo('daughterLetter')">
-        Next Letter 💌
-      </button>
     `;
   }
 }
@@ -96,25 +100,40 @@ function applyBirthdayData() {
 ===================================================== */
 
 function createParticles() {
-  const container = document.getElementById("particles");
+
+  const container =
+    document.getElementById("particles");
+
   if (!container) return;
 
   for (let i = 0; i < 45; i++) {
-    const particle = document.createElement("span");
-    particle.className = "particle";
 
-    particle.style.left = Math.random() * 100 + "%";
+    const particle =
+      document.createElement("span");
+
+    particle.className =
+      "particle";
+
+    particle.style.left =
+      Math.random() * 100 + "%";
+
     particle.style.animationDuration =
       (8 + Math.random() * 14) + "s";
+
     particle.style.animationDelay =
       (-Math.random() * 15) + "s";
+
     particle.style.opacity =
       0.2 + Math.random() * 0.6;
 
-    const size = 2 + Math.random() * 4;
+    const size =
+      2 + Math.random() * 4;
 
-    particle.style.width = size + "px";
-    particle.style.height = size + "px";
+    particle.style.width =
+      size + "px";
+
+    particle.style.height =
+      size + "px";
 
     container.appendChild(particle);
   }
@@ -126,17 +145,24 @@ function createParticles() {
 ===================================================== */
 
 function goTo(id) {
-  const index = journey.findIndex(item => item[0] === id);
+
+  const index =
+    journey.findIndex(
+      item => item[0] === id
+    );
 
   if (index === -1) return;
 
   currentScreenIndex = index;
 
-  document.querySelectorAll(".screen").forEach(screen => {
-    screen.classList.remove("active");
-  });
+  document
+    .querySelectorAll(".screen")
+    .forEach(screen => {
+      screen.classList.remove("active");
+    });
 
-  const screen = document.getElementById(id);
+  const screen =
+    document.getElementById(id);
 
   if (screen) {
     screen.classList.add("active");
@@ -163,20 +189,28 @@ function goTo(id) {
 }
 
 function updateJourneyProgress() {
+
   const progress =
-    (currentScreenIndex / (journey.length - 1)) * 100;
+    (currentScreenIndex /
+      (journey.length - 1)) * 100;
 
   const progressBar =
-    document.getElementById("journeyProgress");
+    document.getElementById(
+      "journeyProgress"
+    );
 
   const journeyText =
-    document.getElementById("journeyText");
+    document.getElementById(
+      "journeyText"
+    );
 
   if (progressBar) {
-    progressBar.style.width = progress + "%";
+    progressBar.style.width =
+      progress + "%";
   }
 
   if (journeyText) {
+
     journeyText.textContent =
       `${currentScreenIndex + 1} / ${journey.length} • ${journey[currentScreenIndex][1]}`;
   }
@@ -192,47 +226,70 @@ function startJourney() {
 ===================================================== */
 
 function initCodeInputs() {
+
   const codeInputs =
-    document.querySelectorAll(".code-input");
+    document.querySelectorAll(
+      ".code-input"
+    );
 
-  codeInputs.forEach((input, index) => {
+  codeInputs.forEach(
+    (input, index) => {
 
-    input.addEventListener("input", () => {
+      input.addEventListener(
+        "input",
+        () => {
 
-      input.value =
-        input.value.replace(/\D/g, "");
+          input.value =
+            input.value.replace(
+              /\D/g,
+              ""
+            );
 
-      if (
-        input.value &&
-        index < codeInputs.length - 1
-      ) {
-        codeInputs[index + 1].focus();
-      }
-    });
+          if (
+            input.value &&
+            index <
+              codeInputs.length - 1
+          ) {
 
-    input.addEventListener("keydown", event => {
+            codeInputs[
+              index + 1
+            ].focus();
+          }
+        }
+      );
 
-      if (
-        event.key === "Backspace" &&
-        !input.value &&
-        index > 0
-      ) {
-        codeInputs[index - 1].focus();
-      }
+      input.addEventListener(
+        "keydown",
+        event => {
 
-      if (event.key === "Enter") {
-        checkCode();
-      }
+          if (
+            event.key === "Backspace" &&
+            !input.value &&
+            index > 0
+          ) {
 
-    });
+            codeInputs[
+              index - 1
+            ].focus();
+          }
 
-  });
+          if (
+            event.key === "Enter"
+          ) {
+            checkCode();
+          }
+        }
+      );
+    }
+  );
 }
 
 function checkCode() {
 
   const codeInputs =
-    document.querySelectorAll(".code-input");
+    document.querySelectorAll(
+      ".code-input"
+    );
 
   const enteredCode =
     [...codeInputs]
@@ -240,70 +297,100 @@ function checkCode() {
       .join("");
 
   const error =
-    document.getElementById("codeError");
+    document.getElementById(
+      "codeError"
+    );
 
   if (enteredCode === SECRET_CODE) {
 
     if (error) {
-      error.textContent = "Unlocked! ❤️";
-      error.style.color = "#f4d28a";
+
+      error.textContent =
+        "Unlocked! ❤️";
+
+      error.style.color =
+        "#f4d28a";
     }
 
-    codeInputs.forEach((input, index) => {
+    codeInputs.forEach(
+      (input, index) => {
 
-      setTimeout(() => {
+        setTimeout(
+          () => {
 
-        input.style.background =
-          "rgba(234,123,123,0.25)";
+            input.style.background =
+              "rgba(234,123,123,0.25)";
 
-        input.style.borderColor =
-          "#f4d28a";
+            input.style.borderColor =
+              "#f4d28a";
 
-        input.style.transform =
-          "scale(1.08)";
+            input.style.transform =
+              "scale(1.08)";
 
-      }, index * 80);
+          },
+          index * 80
+        );
+      }
+    );
 
-    });
+    setTimeout(
+      () => {
 
-    setTimeout(() => {
+        goTo("puzzle");
+        initJigsaw();
 
-      goTo("puzzle");
-      initJigsaw();
-
-    }, 900);
+      },
+      900
+    );
 
   } else {
 
     if (error) {
+
       error.textContent =
         "Hmm... that's not it. Try again ❤️";
     }
 
-    codeInputs.forEach(input => {
+    codeInputs.forEach(
+      input => {
 
-      input.animate(
-        [
-          { transform: "translateX(0)" },
-          { transform: "translateX(-5px)" },
-          { transform: "translateX(5px)" },
-          { transform: "translateX(0)" }
-        ],
-        {
-          duration: 300
-        }
-      );
-
-    });
+        input.animate(
+          [
+            {
+              transform:
+                "translateX(0)"
+            },
+            {
+              transform:
+                "translateX(-5px)"
+            },
+            {
+              transform:
+                "translateX(5px)"
+            },
+            {
+              transform:
+                "translateX(0)"
+            }
+          ],
+          {
+            duration: 300
+          }
+        );
+      }
+    );
   }
 }
 
 function showHint() {
 
   const hint =
-    document.getElementById("codeHint");
+    document.getElementById(
+      "codeHint"
+    );
 
   if (hint) {
+
     hint.textContent =
       "Hint: Most important in u life • 3 birthdays • code is 223010 ❤️";
   }
@@ -317,7 +404,9 @@ function showHint() {
 function initJigsaw() {
 
   const board =
-    document.getElementById("jigsawBoard");
+    document.getElementById(
+      "jigsawBoard"
+    );
 
   if (!board) return;
 
@@ -343,7 +432,9 @@ function initJigsaw() {
       correctPosition;
 
     const row =
-      Math.floor(correctPosition / 3);
+      Math.floor(
+        correctPosition / 3
+      );
 
     const col =
       correctPosition % 3;
@@ -356,7 +447,8 @@ function initJigsaw() {
 
     piece.addEventListener(
       "click",
-      () => selectJigsawPiece(piece)
+      () =>
+        selectJigsawPiece(piece)
     );
 
     puzzlePieces.push(piece);
@@ -367,18 +459,27 @@ function initJigsaw() {
 
 function selectJigsawPiece(piece) {
 
-  if (selectedPuzzlePiece === null) {
+  if (
+    selectedPuzzlePiece === null
+  ) {
 
-    selectedPuzzlePiece = piece;
+    selectedPuzzlePiece =
+      piece;
 
-    piece.classList.add("selected");
+    piece.classList.add(
+      "selected"
+    );
 
     return;
   }
 
-  if (selectedPuzzlePiece === piece) {
+  if (
+    selectedPuzzlePiece === piece
+  ) {
 
-    piece.classList.remove("selected");
+    piece.classList.remove(
+      "selected"
+    );
 
     selectedPuzzlePiece = null;
 
@@ -402,19 +503,23 @@ function selectJigsawPiece(piece) {
   ];
 
   const board =
-    document.getElementById("jigsawBoard");
+    document.getElementById(
+      "jigsawBoard"
+    );
 
   board.innerHTML = "";
 
-  puzzlePieces.forEach(p => {
-    board.appendChild(p);
-  });
+  puzzlePieces.forEach(
+    p => board.appendChild(p)
+  );
 
   selectedPuzzlePiece.classList.remove(
     "selected"
   );
 
-  piece.classList.remove("selected");
+  piece.classList.remove(
+    "selected"
+  );
 
   selectedPuzzlePiece = null;
 
@@ -424,7 +529,9 @@ function selectJigsawPiece(piece) {
 function shuffleJigsaw() {
 
   const board =
-    document.getElementById("jigsawBoard");
+    document.getElementById(
+      "jigsawBoard"
+    );
 
   if (
     !board ||
@@ -435,9 +542,13 @@ function shuffleJigsaw() {
 
   selectedPuzzlePiece = null;
 
-  puzzlePieces.forEach(piece => {
-    piece.classList.remove("selected");
-  });
+  puzzlePieces.forEach(
+    piece => {
+      piece.classList.remove(
+        "selected"
+      );
+    }
+  );
 
   for (
     let i = puzzlePieces.length - 1;
@@ -446,7 +557,9 @@ function shuffleJigsaw() {
   ) {
 
     const j =
-      Math.floor(Math.random() * (i + 1));
+      Math.floor(
+        Math.random() * (i + 1)
+      );
 
     [
       puzzlePieces[i],
@@ -459,12 +572,14 @@ function shuffleJigsaw() {
 
   board.innerHTML = "";
 
-  puzzlePieces.forEach(piece => {
-    board.appendChild(piece);
-  });
+  puzzlePieces.forEach(
+    piece => board.appendChild(piece)
+  );
 
   if (isJigsawSolved()) {
+
     shuffleJigsaw();
+
     return;
   }
 
@@ -474,43 +589,63 @@ function shuffleJigsaw() {
 function isJigsawSolved() {
 
   const pieces =
-    [...document.querySelectorAll(
-      ".jigsaw-piece"
-    )];
+    [
+      ...document.querySelectorAll(
+        ".jigsaw-piece"
+      )
+    ];
 
   return pieces.every(
     (piece, index) =>
-      Number(piece.dataset.correct) === index
+      Number(
+        piece.dataset.correct
+      ) === index
   );
 }
 
 function updatePuzzleStatus() {
 
   const pieces =
-    [...document.querySelectorAll(
-      ".jigsaw-piece"
-    )];
+    [
+      ...document.querySelectorAll(
+        ".jigsaw-piece"
+      )
+    ];
 
   let correct = 0;
 
-  pieces.forEach((piece, index) => {
+  pieces.forEach(
+    (piece, index) => {
 
-    const isCorrect =
-      Number(piece.dataset.correct) === index;
+      const isCorrect =
+        Number(
+          piece.dataset.correct
+        ) === index;
 
-    if (isCorrect) {
-      correct++;
-      piece.classList.add("correct");
-    } else {
-      piece.classList.remove("correct");
+      if (isCorrect) {
+
+        correct++;
+
+        piece.classList.add(
+          "correct"
+        );
+
+      } else {
+
+        piece.classList.remove(
+          "correct"
+        );
+      }
     }
-
-  });
+  );
 
   const status =
-    document.getElementById("puzzleStatus");
+    document.getElementById(
+      "puzzleStatus"
+    );
 
   if (status) {
+
     status.textContent =
       `${correct} / 9 pieces in place`;
   }
@@ -523,9 +658,12 @@ function checkJigsaw() {
   if (isJigsawSolved()) {
 
     const status =
-      document.getElementById("puzzleStatus");
+      document.getElementById(
+        "puzzleStatus"
+      );
 
     if (status) {
+
       status.textContent =
         "9 / 9 pieces in place — Perfect! ❤️";
     }
@@ -536,27 +674,40 @@ function checkJigsaw() {
       );
 
     if (continueButton) {
+
       continueButton.classList.remove(
         "hidden"
       );
     }
 
     document
-      .querySelectorAll(".jigsaw-piece")
-      .forEach(piece => {
+      .querySelectorAll(
+        ".jigsaw-piece"
+      )
+      .forEach(
+        piece => {
 
-        piece.animate(
-          [
-            { transform: "scale(1)" },
-            { transform: "scale(1.04)" },
-            { transform: "scale(1)" }
-          ],
-          {
-            duration: 500
-          }
-        );
-
-      });
+          piece.animate(
+            [
+              {
+                transform:
+                  "scale(1)"
+              },
+              {
+                transform:
+                  "scale(1.04)"
+              },
+              {
+                transform:
+                  "scale(1)"
+              }
+            ],
+            {
+              duration: 500
+            }
+          );
+        }
+      );
   }
 }
 
@@ -593,18 +744,25 @@ function initScratchCard() {
     );
 
   canvas.width =
-    Math.floor(rect.width * dpr);
+    Math.floor(
+      rect.width * dpr
+    );
 
   canvas.height =
-    Math.floor(rect.height * dpr);
+    Math.floor(
+      rect.height * dpr
+    );
 
   const ctx =
     canvas.getContext("2d");
 
   ctx.scale(dpr, dpr);
 
-  const width = rect.width;
-  const height = rect.height;
+  const width =
+    rect.width;
+
+  const height =
+    rect.height;
 
   const gradient =
     ctx.createLinearGradient(
@@ -639,7 +797,8 @@ function initScratchCard() {
     "#b9a77f"
   );
 
-  ctx.fillStyle = gradient;
+  ctx.fillStyle =
+    gradient;
 
   ctx.fillRect(
     0,
@@ -683,7 +842,10 @@ function initScratchCard() {
 
   function scratch(event) {
 
-    if (!scratching || scratchDone) {
+    if (
+      !scratching ||
+      scratchDone
+    ) {
       return;
     }
 
@@ -714,10 +876,12 @@ function initScratchCard() {
     }
 
     const scaleX =
-      canvas.width / bounds.width;
+      canvas.width /
+      bounds.width;
 
     const scaleY =
-      canvas.height / bounds.height;
+      canvas.height /
+      bounds.height;
 
     const x =
       (clientX - bounds.left) *
@@ -779,12 +943,14 @@ function initScratchCard() {
 
   canvas.addEventListener(
     "pointerup",
-    () => scratching = false
+    () =>
+      scratching = false
   );
 
   canvas.addEventListener(
     "pointercancel",
-    () => scratching = false
+    () =>
+      scratching = false
   );
 }
 
@@ -808,7 +974,8 @@ function checkScratchPercentage() {
   const height =
     canvas.height;
 
-  const sampleSize = 5000;
+  const sampleSize =
+    5000;
 
   const imageData =
     ctx.getImageData(
@@ -873,6 +1040,7 @@ function checkScratchPercentage() {
     );
 
   if (progress) {
+
     progress.style.width =
       Math.min(
         100,
@@ -881,6 +1049,7 @@ function checkScratchPercentage() {
   }
 
   if (percentText) {
+
     percentText.textContent =
       percentage < 25
         ? `Keep scratching... ${percentage}% ✨`
@@ -902,21 +1071,25 @@ function checkScratchPercentage() {
       );
 
     if (continueButton) {
+
       continueButton.classList.remove(
         "hidden"
       );
     }
 
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-      );
+        ctx.clearRect(
+          0,
+          0,
+          width,
+          height
+        );
 
-    }, 300);
+      },
+      300
+    );
   }
 }
 
@@ -926,16 +1099,20 @@ function checkScratchPercentage() {
 ===================================================== */
 
 const questions = [
+
   {
-    text: "The day you married Thaththa, did you think he would be this annoying? 😂❤️",
+    text:
+      "The day you married Thaththa, did you think he would be this annoying? 😂❤️",
     options: [
       "Yes 😂",
       "No 😇",
       "I knew what I was getting into 🤣"
     ]
   },
+
   {
-    text: "Who do you love the most? 👀❤️",
+    text:
+      "Who do you love the most? 👀❤️",
     options: [
       "Thaththa 😂",
       "Loku Doni 🥰",
@@ -943,8 +1120,10 @@ const questions = [
       "All three… but secretly one more than the others 🤭😂"
     ]
   },
+
   {
-    text: "Who makes you laugh the most? 😂",
+    text:
+      "Who makes you laugh the most? 😂",
     options: [
       "Thaththa",
       "Loku Doni",
@@ -952,8 +1131,10 @@ const questions = [
       "All of us together 🤣❤️"
     ]
   },
+
   {
-    text: "Who is the most naughty? 😈😂",
+    text:
+      "Who is the most naughty? 😈😂",
     options: [
       "Thaththa",
       "Loku Doni",
@@ -961,8 +1142,10 @@ const questions = [
       "Definitely ALL of us 😭🤣"
     ]
   },
+
   {
-    text: "Who do you think loves you the most? 👀❤️",
+    text:
+      "Who do you think loves you the most? 👀❤️",
     options: [
       "Loku Doni",
       "Chooty Doni",
@@ -970,16 +1153,20 @@ const questions = [
       "Nobody… thankfully 😂"
     ]
   },
+
   {
-    text: "Who gives the best hugs? 🤗❤️",
+    text:
+      "Who gives the best hugs? 🤗❤️",
     options: [
       "Thaththa",
       "Loku Doni",
       "Chooty Doni"
     ]
   },
+
   {
-    text: "Who is your best friend in the family? 👀😂❤️",
+    text:
+      "Who is your best friend in the family? 👀😂❤️",
     options: [
       "Thaththa",
       "Loku Doni",
@@ -987,16 +1174,22 @@ const questions = [
       "You can't choose! 🤣"
     ]
   },
+
   {
-    text: "If you could describe our family in three words, what would they be? ❤️",
+    text:
+      "If you could describe our family in three words, what would they be? ❤️",
     open: true
   },
+
   {
-    text: "If our family had a movie, what would you name it? 🎬😂❤️",
+    text:
+      "If our family had a movie, what would you name it? 🎬😂❤️",
     open: true
   },
+
   {
-    text: "What is your favourite family memory that you will never forget? ❤️",
+    text:
+      "What is your favourite family memory that you will never forget? ❤️",
     open: true
   }
 ];
@@ -1029,16 +1222,19 @@ function renderQuestion() {
     );
 
   if (questionNumber) {
+
     questionNumber.textContent =
       `Question ${quizIndex + 1} of 10`;
   }
 
   if (questionProgress) {
+
     questionProgress.style.width =
       `${((quizIndex + 1) / 10) * 100}%`;
   }
 
   if (questionText) {
+
     questionText.textContent =
       question.text;
   }
@@ -1066,12 +1262,15 @@ function renderQuestion() {
     textarea.addEventListener(
       "input",
       () => {
+
         quizAnswers[quizIndex] =
           textarea.value;
       }
     );
 
-    area.appendChild(textarea);
+    area.appendChild(
+      textarea
+    );
 
   } else {
 
@@ -1098,6 +1297,7 @@ function renderQuestion() {
           quizAnswers[quizIndex] ===
           option
         ) {
+
           button.classList.add(
             "selected"
           );
@@ -1125,7 +1325,9 @@ function renderQuestion() {
       }
     );
 
-    area.appendChild(answers);
+    area.appendChild(
+      answers
+    );
   }
 
   const previous =
@@ -1139,6 +1341,7 @@ function renderQuestion() {
     );
 
   if (previous) {
+
     previous.style.visibility =
       quizIndex === 0
         ? "hidden"
@@ -1146,6 +1349,7 @@ function renderQuestion() {
   }
 
   if (next) {
+
     next.textContent =
       quizIndex === 9
         ? "Finish Quiz ❤️"
@@ -1165,23 +1369,27 @@ function selectAnswer(
     .querySelectorAll(
       ".answer-card"
     )
-    .forEach(card =>
-      card.classList.remove(
-        "selected"
-      )
+    .forEach(
+      card =>
+        card.classList.remove(
+          "selected"
+        )
     );
 
   button.classList.add(
     "selected"
   );
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    if (quizIndex < 9) {
-      nextQuestion();
-    }
+      if (quizIndex < 9) {
+        nextQuestion();
+      }
 
-  }, 450);
+    },
+    450
+  );
 }
 
 function nextQuestion() {
@@ -1192,6 +1400,7 @@ function nextQuestion() {
     );
 
   if (textarea) {
+
     quizAnswers[quizIndex] =
       textarea.value;
   }
@@ -1205,7 +1414,6 @@ function nextQuestion() {
   } else {
 
     goTo("memories");
-
   }
 }
 
@@ -1219,6 +1427,7 @@ function previousQuestion() {
       );
 
     if (textarea) {
+
       quizAnswers[quizIndex] =
         textarea.value;
     }
@@ -1323,8 +1532,13 @@ function renderMemories() {
     overlay.textContent =
       `Memory ${String(i - 1).padStart(2, "0")} ❤️`;
 
-    card.appendChild(image);
-    card.appendChild(overlay);
+    card.appendChild(
+      image
+    );
+
+    card.appendChild(
+      overlay
+    );
 
     card.addEventListener(
       "click",
@@ -1334,16 +1548,18 @@ function renderMemories() {
           image.style.display !==
           "none"
         ) {
+
           openLightbox(
             image.src,
             `Memory ${i - 1} ❤️`
           );
         }
-
       }
     );
 
-    grid.appendChild(card);
+    grid.appendChild(
+      card
+    );
   }
 }
 
@@ -1375,11 +1591,13 @@ function openLightbox(
     );
 
   if (lightboxImage) {
+
     lightboxImage.src =
       src;
   }
 
   if (lightboxCaption) {
+
     lightboxCaption.textContent =
       caption || "";
   }
@@ -1455,23 +1673,28 @@ function startHeartGame() {
     );
 
   if (message) {
+
     message.textContent =
       "Catch 5 hearts! ❤️";
   }
 
   if (continueButton) {
+
     continueButton.classList.add(
       "hidden"
     );
   }
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    heartGameStarted = true;
+      heartGameStarted = true;
 
-    startHeartSpawner();
+      startHeartSpawner();
 
-  }, 500);
+    },
+    500
+  );
 }
 
 function updateHeartScore() {
@@ -1487,11 +1710,13 @@ function updateHeartScore() {
     );
 
   if (score) {
+
     score.textContent =
       heartsCaught;
   }
 
   if (progress) {
+
     progress.style.width =
       `${(heartsCaught / 5) * 100}%`;
   }
@@ -1500,6 +1725,7 @@ function updateHeartScore() {
 function startHeartSpawner() {
 
   if (heartTimer) {
+
     clearInterval(
       heartTimer
     );
@@ -1508,20 +1734,23 @@ function startHeartSpawner() {
   spawnHeart();
 
   heartTimer =
-    setInterval(() => {
+    setInterval(
+      () => {
 
-      if (heartsCaught >= 5) {
+        if (heartsCaught >= 5) {
 
-        clearInterval(
-          heartTimer
-        );
+          clearInterval(
+            heartTimer
+          );
 
-        return;
-      }
+          return;
+        }
 
-      spawnHeart();
+        spawnHeart();
 
-    }, 900);
+      },
+      900
+    );
 }
 
 function spawnHeart() {
@@ -1547,7 +1776,12 @@ function spawnHeart() {
     "game-heart";
 
   heart.textContent =
-    ["❤️", "💕", "💗", "💖"][
+    [
+      "❤️",
+      "💕",
+      "💗",
+      "💖"
+    ][
       Math.floor(
         Math.random() * 4
       )
@@ -1599,13 +1833,16 @@ function spawnHeart() {
     heart
   );
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    if (heart.parentNode) {
-      heart.remove();
-    }
+      if (heart.parentNode) {
+        heart.remove();
+      }
 
-  }, 2600);
+    },
+    2600
+  );
 }
 
 function catchHeart(heart) {
@@ -1629,6 +1866,7 @@ function catchHeart(heart) {
       false;
 
     if (heartTimer) {
+
       clearInterval(
         heartTimer
       );
@@ -1645,11 +1883,13 @@ function catchHeart(heart) {
       );
 
     if (message) {
+
       message.textContent =
         "You caught all the love! ❤️🎉";
     }
 
     if (continueButton) {
+
       continueButton.classList.remove(
         "hidden"
       );
@@ -1663,6 +1903,7 @@ function catchHeart(heart) {
       );
 
     if (message) {
+
       message.textContent =
         `${5 - heartsCaught} more to go! 💕`;
     }
@@ -1675,13 +1916,21 @@ function catchHeart(heart) {
 ===================================================== */
 
 const wheelResults = [
+
   "A BIG HUG from everyone! 🤗❤️",
+
   "A birthday kiss! 😘❤️",
+
   "Birthday cake time! 🎂",
+
   "A beautiful family photo! 📸❤️",
+
   "A special love note! 💌",
+
   "A little family dance! 💃🕺",
+
   "Make a birthday wish! ✨",
+
   "One more surprise is waiting! 🎁"
 ];
 
@@ -1713,9 +1962,15 @@ function spinWheel() {
       "wheelContinue"
     );
 
-  if (!wheel) return;
+  if (!wheel) {
+
+    wheelSpinning = false;
+
+    return;
+  }
 
   if (result) {
+
     result.textContent =
       "Spinning... 🎡❤️";
   }
@@ -1748,64 +2003,56 @@ function spinWheel() {
   wheel.style.transform =
     `rotate(${wheelRotation}deg)`;
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    if (result) {
-      result.textContent =
-        wheelResults[resultIndex];
-    }
+      if (result) {
 
-    if (spinButton) {
-      spinButton.classList.add(
-        "hidden"
-      );
-    }
+        result.textContent =
+          wheelResults[resultIndex];
+      }
 
-    if (continueButton) {
-      continueButton.classList.remove(
-        "hidden"
-      );
-    }
+      if (spinButton) {
 
-    wheelSpinning = false;
+        spinButton.classList.add(
+          "hidden"
+        );
+      }
 
-  }, 5100);
+      if (continueButton) {
+
+        continueButton.classList.remove(
+          "hidden"
+        );
+      }
+
+      wheelSpinning = false;
+
+    },
+    5100
+  );
 }
 
 
 /* =====================================================
-   ENVELOPES
+   ONE LETTER
 ===================================================== */
 
 function openEnvelope(type) {
 
-  let envelope;
-  let letter;
-
-  if (type === "husband") {
-
-    envelope =
-      document.getElementById(
-        "husbandEnvelope"
-      );
-
-    letter =
-      document.getElementById(
-        "husbandLetterContent"
-      );
-
-  } else {
-
-    envelope =
-      document.getElementById(
-        "daughterEnvelope"
-      );
-
-    letter =
-      document.getElementById(
-        "daughterLetterContent"
-      );
+  if (type !== "letter") {
+    return;
   }
+
+  const envelope =
+    document.getElementById(
+      "letterEnvelope"
+    );
+
+  const letter =
+    document.getElementById(
+      "letterContent"
+    );
 
   if (!envelope || !letter) {
     return;
@@ -1823,22 +2070,28 @@ function openEnvelope(type) {
     "opened"
   );
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    letter.classList.remove(
-      "hidden"
-    );
+      letter.classList.remove(
+        "hidden"
+      );
 
-    setTimeout(() => {
+      setTimeout(
+        () => {
 
-      letter.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+          letter.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
 
-    }, 150);
+        },
+        150
+      );
 
-  }, 750);
+    },
+    750
+  );
 }
 
 
@@ -1878,33 +2131,36 @@ function startFinalReveal() {
     number;
 
   const timer =
-    setInterval(() => {
+    setInterval(
+      () => {
 
-      number--;
+        number--;
 
-      if (number > 0) {
+        if (number > 0) {
 
-        countdown.textContent =
-          number;
+          countdown.textContent =
+            number;
 
-      } else {
+        } else {
 
-        clearInterval(
-          timer
-        );
+          clearInterval(
+            timer
+          );
 
-        countdown.classList.add(
-          "hidden"
-        );
+          countdown.classList.add(
+            "hidden"
+          );
 
-        celebration.classList.remove(
-          "hidden"
-        );
+          celebration.classList.remove(
+            "hidden"
+          );
 
-        launchConfetti();
-      }
+          launchConfetti();
+        }
 
-    }, 1000);
+      },
+      1000
+    );
 }
 
 
@@ -1961,9 +2217,10 @@ function launchConfetti() {
       confetti
     );
 
-    setTimeout(() => {
-      confetti.remove();
-    }, 6500);
+    setTimeout(
+      () => confetti.remove(),
+      6500
+    );
   }
 }
 
@@ -1999,33 +2256,37 @@ function openGift() {
     );
 
   if (hint) {
+
     hint.classList.add(
       "hidden"
     );
   }
 
-  setTimeout(() => {
+  setTimeout(
+    () => {
 
-    const reveal =
-      document.getElementById(
-        "giftReveal"
-      );
+      const reveal =
+        document.getElementById(
+          "giftReveal"
+        );
 
-    if (reveal) {
+      if (reveal) {
 
-      reveal.classList.remove(
-        "hidden"
-      );
+        reveal.classList.remove(
+          "hidden"
+        );
 
-      reveal.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }
+        reveal.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
 
-    launchConfetti();
+      launchConfetti();
 
-  }, 850);
+    },
+    850
+  );
 }
 
 
@@ -2054,6 +2315,7 @@ function restartJourney() {
   heartGameStarted = false;
 
   if (heartTimer) {
+
     clearInterval(
       heartTimer
     );
@@ -2102,92 +2364,80 @@ function restartJourney() {
     );
 
   if (gift) {
+
     gift.classList.remove(
       "opened"
     );
   }
 
   if (giftReveal) {
+
     giftReveal.classList.add(
       "hidden"
     );
   }
 
   if (giftHint) {
+
     giftHint.classList.remove(
       "hidden"
     );
   }
 
   if (countdown) {
+
     countdown.classList.remove(
       "hidden"
     );
   }
 
   if (celebration) {
+
     celebration.classList.add(
       "hidden"
     );
   }
 
   if (spinButton) {
+
     spinButton.classList.remove(
       "hidden"
     );
   }
 
   if (wheelContinue) {
+
     wheelContinue.classList.add(
       "hidden"
     );
   }
 
   if (wheelResult) {
+
     wheelResult.textContent =
       "";
   }
 
-  const husbandEnvelope =
+  const letterEnvelope =
     document.getElementById(
-      "husbandEnvelope"
+      "letterEnvelope"
     );
 
-  const daughterEnvelope =
+  const letterContent =
     document.getElementById(
-      "daughterEnvelope"
+      "letterContent"
     );
 
-  const husbandLetter =
-    document.getElementById(
-      "husbandLetterContent"
-    );
+  if (letterEnvelope) {
 
-  const daughterLetter =
-    document.getElementById(
-      "daughterLetterContent"
-    );
-
-  if (husbandEnvelope) {
-    husbandEnvelope.classList.remove(
+    letterEnvelope.classList.remove(
       "opened"
     );
   }
 
-  if (daughterEnvelope) {
-    daughterEnvelope.classList.remove(
-      "opened"
-    );
-  }
+  if (letterContent) {
 
-  if (husbandLetter) {
-    husbandLetter.classList.add(
-      "hidden"
-    );
-  }
-
-  if (daughterLetter) {
-    daughterLetter.classList.add(
+    letterContent.classList.add(
       "hidden"
     );
   }
@@ -2215,14 +2465,12 @@ function initializeBirthdayWebsite() {
 
 
 /*
-   IMPORTANT:
    script.js is loaded dynamically by index.html.
-   Therefore the normal window "load" event may
-   already have happened.
 */
 
 if (
-  document.readyState === "loading"
+  document.readyState ===
+  "loading"
 ) {
 
   document.addEventListener(
@@ -2236,5 +2484,4 @@ if (
 } else {
 
   initializeBirthdayWebsite();
-
 }

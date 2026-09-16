@@ -18,7 +18,10 @@ const journey = [
 
 let currentScreenIndex = 0;
 
-const SECRET_CODE = "223010";
+// Birthday data loaded from Supabase
+const BIRTHDAY = window.BIRTHDAY_DATA || {};
+
+const SECRET_CODE = BIRTHDAY.secret_code || "223010";
 
 let puzzlePieces = [];
 let selectedPuzzlePiece = null;

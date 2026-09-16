@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Happy Birthday Amma ❤️</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Background -->
+  <div class="background-glow"></div>
+  <div id="particles"></div>
+
+  <!-- Journey Progress -->
+  <div class="journey-bar">
+    <div class="journey-top">
+      <span id="journeyText">1 / 11</span>
+      <span>❤️ Amma's Birthday Journey</span>
+    </div>
+
+    <div class="journey-track">
+      <div id="journeyProgress"></div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- =====================================================
+          INTRO
+    ====================================================== -->
+    <section id="intro" class="screen active">
+      <div class="glass-card hero-card">
+
+        <div class="moon">🌙</div>
+
+        <p class="eyebrow">A little birthday surprise...</p>
+
+        <h1>
+          Happy Birthday<br>
+          <span>Amma ❤️</span>
+        </h1>
+
+        <p class="hero-text">
+          Tonight is not just a birthday.<br>
+          It's a little journey made with love,
+          memories, laughter and a few surprises. 🥹❤️
+        </p>
+
+        <div class="floating-hearts">
+          💗 💘 💖
+        </div>
+
+        <button class="main-btn" onclick="startJourney()">
+          Begin the Surprise ✨
+        </button>
+
+        <p class="tiny-note">Made with all our love ❤️</p>
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          SECRET CODE
+    ====================================================== -->
+    <section id="code" class="screen">
+      <div class="glass-card mission-card">
+
+        <div class="mission-icon">🔐</div>
+
+        <p class="eyebrow">Mission 01</p>
+
+        <h2>The Secret Code</h2>
+
+        <p class="mission-description">
+          Six little numbers stand between you and your surprise. 👀❤️
+        </p>
+
+        <div class="code-inputs">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+          <input maxlength="1" inputmode="numeric" class="code-input">
+        </div>
+
+        <button class="main-btn" onclick="checkCode()">
+          Unlock ❤️
+        </button>
+
+        <button class="ghost-btn" onclick="showHint()">
+          💡 Need a hint?
+        </button>
+
+        <p id="codeHint" class="hint"></p>
+        <p id="codeError" class="error-message"></p>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          JIGSAW PUZZLE
+    ====================================================== -->
+    <section id="puzzle" class="screen">
+      <div class="glass-card puzzle-card">
+
+        <div class="mission-icon">🧩</div>
+
+        <p class="eyebrow">Mission 02</p>
+
+        <h2>Put Our Picture Together ❤️</h2>
+
+        <p class="mission-description">
+          Just like a little jigsaw puzzle.
+          <br>
+          <strong>Tap two pieces to swap them.</strong>
+        </p>
+
+        <div class="puzzle-wrapper">
+
+          <div id="jigsawBoard" class="jigsaw-board"></div>
+
+        </div>
+
+        <div class="puzzle-help">
+          <span>🧩</span>
+          <span id="puzzleStatus">
+            0 / 9 pieces in place
+          </span>
+        </div>
+
+        <div class="puzzle-actions">
+          <button class="ghost-btn" onclick="shuffleJigsaw()">
+            🔀 Easy Shuffle
+          </button>
+
+          <button
+            id="puzzleContinue"
+            class="main-btn hidden"
+            onclick="goTo('scratch')">
+            Continue ✨
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          SCRATCH CARD
+    ====================================================== -->
+    <section id="scratch" class="screen">
+      <div class="glass-card mission-card">
+
+        <div class="mission-icon">✨</div>
+
+        <p class="eyebrow">Mission 03</p>
+
+        <h2>Scratch Your Surprise</h2>
+
+        <p class="mission-description">
+          Rub the golden surface gently with your finger. 💕
+        </p>
+
+        <div class="scratch-container">
+
+          <div class="scratch-message">
+            <div class="secret-gift-icon">🎁</div>
+
+            <h3>A little message for Amma</h3>
+
+            <p>
+              You are loved more than you could ever imagine. ❤️
+            </p>
+          </div>
+
+          <canvas id="scratchCanvas"></canvas>
+
+        </div>
+
+        <div class="scratch-progress">
+          <div id="scratchProgress"></div>
+        </div>
+
+        <p id="scratchPercent">Keep scratching... ✨</p>
+
+        <button
+          id="scratchContinue"
+          class="main-btn hidden"
+          onclick="goTo('quiz')">
+          I Found It ❤️
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          QUESTIONS
+    ====================================================== -->
+    <section id="quiz" class="screen">
+      <div class="glass-card quiz-card">
+
+        <div class="mission-icon">💗</div>
+
+        <p class="eyebrow">Mission 04</p>
+
+        <div class="question-top">
+          <span id="questionNumber">Question 1 of 10</span>
+
+          <div class="question-progress">
+            <div id="questionProgress"></div>
+          </div>
+        </div>
+
+        <h2 id="questionText"></h2>
+
+        <div id="answerArea"></div>
+
+        <div class="quiz-navigation">
+          <button
+            id="previousQuestion"
+            class="ghost-btn"
+            onclick="previousQuestion()">
+            ← Previous
+          </button>
+
+          <button
+            id="nextQuestion"
+            class="main-btn"
+            onclick="nextQuestion()">
+            Next ❤️
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          MEMORIES
+    ====================================================== -->
+    <section id="memories" class="screen">
+      <div class="glass-card memories-card">
+
+        <div class="mission-icon">📸</div>
+
+        <p class="eyebrow">Mission 05</p>
+
+        <h2>Our Little Memories ❤️</h2>
+
+        <p class="mission-description">
+          38 little pieces of our story.
+          <br>
+          Tap any photo to see it bigger. 🥹
+        </p>
+
+        <div id="memoryGrid" class="memory-grid">
+
+          <div class="memory-card" onclick="openLightbox('1(2).jpg', 'Amma ❤️')">
+            <img src="1 (2).jpg" alt="Memory 1">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(3).jpg', 'Amma ❤️')">
+            <img src="1 (3).jpg" alt="Memory 2">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(4).jpg', 'Amma ❤️')">
+            <img src="1 (4).jpg" alt="Memory 3">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(5).jpg', 'Amma ❤️')">
+            <img src="1 (5).jpg" alt="Memory 4">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(6).jpg', 'Amma ❤️')">
+            <img src="1 (6).jpg" alt="Memory 5">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(7).jpg', 'Amma ❤️')">
+            <img src="1 (7).jpg" alt="Memory 6">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(8).jpg', 'Amma ❤️')">
+            <img src="1 (8).jpg" alt="Memory 7">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(9).jpg', 'Amma ❤️')">
+            <img src="1 (9).jpg" alt="Memory 8">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(10).jpg', 'Amma ❤️')">
+            <img src="1 (10).jpg" alt="Memory 9">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(11).jpg', 'Amma ❤️')">
+            <img src="1 (11).jpg" alt="Memory 10">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(12).jpg', 'Amma ❤️')">
+            <img src="1 (12).jpg" alt="Memory 11">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(13).jpg', 'Amma ❤️')">
+            <img src="1 (13).jpg" alt="Memory 12">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(14).jpg', 'Amma ❤️')">
+            <img src="1 (14).jpg" alt="Memory 13">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(15).jpg', 'Amma ❤️')">
+            <img src="1 (15).jpg" alt="Memory 14">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(16).jpg', 'Amma ❤️')">
+            <img src="1 (16).jpg" alt="Memory 15">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(17).jpg', 'Amma ❤️')">
+            <img src="1 (17).jpg" alt="Memory 16">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(18).jpg', 'Amma ❤️')">
+            <img src="1 (18).jpg" alt="Memory 17">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(19).jpg', 'Amma ❤️')">
+            <img src="1 (19).jpg" alt="Memory 18">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(20).jpg', 'Amma ❤️')">
+            <img src="1 (20).jpg" alt="Memory 19">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(21).jpg', 'Amma ❤️')">
+            <img src="1 (21).jpg" alt="Memory 20">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(22).jpg', 'Amma ❤️')">
+            <img src="1 (22).jpg" alt="Memory 21">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(23).jpg', 'Amma ❤️')">
+            <img src="1 (23).jpg" alt="Memory 22">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(24).jpg', 'Amma ❤️')">
+            <img src="1 (24).jpg" alt="Memory 23">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(25).jpg', 'Amma ❤️')">
+            <img src="1 (25).jpg" alt="Memory 24">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(26).jpg', 'Amma ❤️')">
+            <img src="1 (26).jpg" alt="Memory 25">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(27).jpg', 'Amma ❤️')">
+            <img src="1 (27).jpg" alt="Memory 26">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(28).jpg', 'Amma ❤️')">
+            <img src="1 (28).jpg" alt="Memory 27">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(29).jpg', 'Amma ❤️')">
+            <img src="1 (29).jpg" alt="Memory 28">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(30).jpg', 'Amma ❤️')">
+            <img src="1 (30).jpg" alt="Memory 29">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(31).jpg', 'Amma ❤️')">
+            <img src="1 (31).mp3" alt="Memory 30">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(32).jpg', 'Amma ❤️')">
+            <img src="1 (32).jpg" alt="Memory 31">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(33).jpg', 'Amma ❤️')">
+            <img src="1 (33).jpg" alt="Memory 32">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(34).jpg', 'Amma ❤️')">
+            <img src="1 (34).jpg" alt="Memory 33">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(35).jpg', 'Amma ❤️')">
+            <img src="1 (35).jpg" alt="Memory 34">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(36).jpg', 'Amma ❤️')">
+            <img src="1 (36).jpg" alt="Memory 35">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(37).jpg', 'Amma ❤️')">
+            <img src="1 (37).jpg" alt="Memory 36">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(38).jpg', 'Amma ❤️')">
+            <img src="1 (38).jpg" alt="Memory 37">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+          <div class="memory-card" onclick="openLightbox('1(39).jpg', 'Amma ❤️')">
+            <img src="1 (39).jpg" alt="Memory 38">
+            <div class="memory-overlay">Amma ❤️</div>
+          </div>
+
+        </div>
+
+        <button class="main-btn" onclick="startHeartGame()">
+          Continue to Hearts 💕
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          LIGHTBOX
+    ====================================================== -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+      <button class="lightbox-close" onclick="closeLightbox()">×</button>
+
+      <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="Memory">
+        <p id="lightboxCaption"></p>
+      </div>
+    </div>
+
+
+    <!-- =====================================================
+          HEART GAME
+    ====================================================== -->
+    <section id="hearts" class="screen">
+      <div class="glass-card mission-card">
+
+        <div class="mission-icon">💕</div>
+
+        <p class="eyebrow">Mission 06</p>
+
+        <h2>Catch the Hearts</h2>
+
+        <p class="mission-description">
+          Catch <strong>5 hearts</strong> before they disappear! ❤️
+        </p>
+
+        <div class="heart-score">
+          <span id="heartScore">0</span>
+          <span>/ 5</span>
+        </div>
+
+        <div class="heart-progress">
+          <div id="heartProgress"></div>
+        </div>
+
+        <div id="heartArena" class="heart-arena"></div>
+
+        <p id="heartMessage" class="game-message">
+          Get ready... 💕
+        </p>
+
+        <button
+          id="heartContinue"
+          class="main-btn hidden"
+          onclick="goTo('wheel')">
+          We Did It! 🎉
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          LOVE WHEEL
+    ====================================================== -->
+    <section id="wheel" class="screen">
+      <div class="glass-card wheel-card">
+
+        <div class="mission-icon">🎡</div>
+
+        <p class="eyebrow">Mission 07</p>
+
+        <h2>The Love Wheel</h2>
+
+        <p class="mission-description">
+          Let's see what your birthday wheel chooses for you. ❤️
+        </p>
+
+        <div class="wheel-wrapper">
+
+          <div class="wheel-pointer">▼</div>
+
+          <div id="loveWheel" class="love-wheel">
+
+            <div class="wheel-label label-1">BIG HUG ❤️</div>
+            <div class="wheel-label label-2">KISS 😘</div>
+            <div class="wheel-label label-3">CAKE 🎂</div>
+            <div class="wheel-label label-4">PHOTO 📸</div>
+            <div class="wheel-label label-5">LOVE NOTE 💌</div>
+            <div class="wheel-label label-6">DANCE 💃</div>
+            <div class="wheel-label label-7">WISH ✨</div>
+            <div class="wheel-label label-8">SURPRISE 🎁</div>
+
+            <div class="wheel-center">
+              ❤️
+            </div>
+
+          </div>
+
+        </div>
+
+        <p id="wheelResult" class="wheel-result"></p>
+
+        <button
+          id="spinButton"
+          class="main-btn"
+          onclick="spinWheel()">
+          Spin the Wheel 🎡
+        </button>
+
+        <button
+          id="wheelContinue"
+          class="main-btn hidden"
+          onclick="goTo('husbandLetter')">
+          Continue 💌
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          HUSBAND LETTER
+    ====================================================== -->
+    <section id="husbandLetter" class="screen">
+      <div class="letter-screen">
+
+        <p class="eyebrow">A Letter From Your Husband</p>
+
+        <h2>For My Wifey ❤️</h2>
+
+        <div
+          class="envelope"
+          id="husbandEnvelope"
+          onclick="openEnvelope('husband')">
+
+          <div class="envelope-back"></div>
+
+          <div class="envelope-paper">
+            <span>💌</span>
+            <p>Open me, my love...</p>
+          </div>
+
+          <div class="envelope-front"></div>
+          <div class="envelope-flap"></div>
+
+        </div>
+
+        <p class="envelope-hint">
+          Tap the envelope ❤️
+        </p>
+
+        <div id="husbandLetterContent" class="letter-paper hidden">
+
+          <div class="letter-decoration">🌹</div>
+
+          <p>
+            Happy Birthday to the woman who owns my heart, my love, my wife,
+            and my forever. ❤️🎂🌹
+          </p>
+
+          <p>
+            My love, I honestly don’t know if words will ever be enough to
+            tell you how much you mean to me. You came into my life and turned
+            an ordinary life into something beautiful. You became my happiness,
+            my comfort, my strength, and the one person I can always call
+            <strong>home</strong>. ❤️
+          </p>
+
+          <p>
+            I love the way you care, the way you love, the way you smile,
+            and even the little things you do that you probably don’t realize
+            I notice. Every day, I find another reason to fall in love with
+            you all over again. 🥺❤️
+          </p>
+
+          <p>
+            We have shared beautiful moments, difficult days, laughter,
+            tears, and countless memories. Through everything, there is still
+            no one else I would rather have beside me. If life gave me the
+            chance to choose again, I would choose <strong>you</strong> —
+            every single time. ❤️
+          </p>
+
+          <p>
+            On your birthday, my only wish is that I can keep making you smile,
+            keep your heart happy, hold your hand through every season of life,
+            and grow old beside you. I want to be there for every dream you
+            have, every challenge you face, and every beautiful moment that is
+            still waiting for us.
+          </p>
+
+          <p>
+            You are more than my wife.
+            <strong>
+              You are my person, my peace, my greatest blessing,
+              and the love of my life.
+            </strong>
+            ❤️
+          </p>
+
+          <p>
+            Happy Birthday, my wifey. 🎂❤️<br>
+            May this new year of your life bring you all the happiness
+            your beautiful heart deserves.
+          </p>
+
+          <p>
+            <strong>
+              I love you today, tomorrow, and for every lifetime I could
+              ever have with you.
+            </strong>
+            ❤️🌹
+          </p>
+
+          <p class="signature">
+            Forever yours,<br>
+            <strong>Your Husband ❤️</strong>
+          </p>
+
+          <button
+            class="main-btn"
+            onclick="goTo('daughterLetter')">
+            Next Letter 💌
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          DAUGHTERS LETTER
+    ====================================================== -->
+    <section id="daughterLetter" class="screen">
+      <div class="letter-screen">
+
+        <p class="eyebrow">A Letter From Your Donis</p>
+
+        <h2>For Our Beautiful Amma ❤️</h2>
+
+        <div
+          class="envelope"
+          id="daughterEnvelope"
+          onclick="openEnvelope('daughters')">
+
+          <div class="envelope-back"></div>
+
+          <div class="envelope-paper">
+            <span>👩‍👧‍👧</span>
+            <p>From Loku Doni & Chooty Doni...</p>
+          </div>
+
+          <div class="envelope-front"></div>
+          <div class="envelope-flap"></div>
+
+        </div>
+
+        <p class="envelope-hint">
+          Tap the envelope ❤️
+        </p>
+
+        <div id="daughterLetterContent" class="letter-paper hidden">
+
+          <div class="letter-decoration">🌸</div>
+
+          <p>
+            Happy Birthday to the most beautiful and loving
+            <strong>Amma</strong> in the whole world! ❤️🎂🌸
+          </p>
+
+          <p>
+            Amma, you are our biggest blessing and the most special person
+            in our lives. You are the one who loves us without limits,
+            takes care of us every day, wipes our tears, celebrates our
+            little victories, and makes our world feel safe and happy.
+            🥺❤️
+          </p>
+
+          <p>
+            We will always be your
+            <strong>Loku Doni &amp; Chooty Doni</strong>
+            . the two little hearts who love their Amma more than words
+            can ever explain. ❤️👩‍👧‍👧
+          </p>
+
+          <p>
+            But Amma, you are so much more than just our mother.
+            <strong>You are like our best friend.</strong> 🥹❤️
+            We can talk to you about everything, share our little secrets,
+            laugh about the silliest things, and spend hours just talking
+            about anything and everything. Every day we spend with you is
+            a day filled with smiles, laughter, and happiness. 🥰❤️
+          </p>
+
+          <p>
+            Sometimes we look at you and feel so lucky that our Amma is
+            someone we can love, trust, laugh with, and share our whole world
+            with. You make even the simplest moments feel so special. ❤️
+          </p>
+
+          <p>
+            Thank you for every hug, every kiss, every little sacrifice,
+            every conversation, and every beautiful memory you have given us.
+            Thank you for always listening, always understanding, and always
+            being there. ❤️
+          </p>
+
+          <p>
+            Amma, your smile is our happiness, your hugs are our safest place,
+            and your love is something we will carry in our hearts forever.
+            🌷❤️
+          </p>
+
+          <p>
+            On your special day, we pray that you will always be happy,
+            healthy, smiling, and surrounded by all the love you deserve.
+            May all your dreams come true, because
+            <strong>
+              you deserve the whole world and so much more.
+            </strong>
+            🐼❤️
+          </p>
+
+          <p>
+            <strong>
+              Happy Birthday, our beautiful Amma!
+            </strong>
+            🎂🥰❤️
+          </p>
+
+          <p>
+            We love you more than the stars, more than all the flowers,
+            and more than all the words in the world could ever say.
+            🌹❤️
+          </p>
+
+          <p class="signature">
+            With the biggest hugs and kisses,<br>
+            <strong>
+              Your Loku Doni &amp; Chooty Doni
+            </strong>
+            🥹❤️👩‍👧‍👧
+          </p>
+
+          <button
+            class="main-btn"
+            onclick="startFinalReveal()">
+            One Last Surprise 🎁
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- =====================================================
+          FINAL REVEAL
+    ====================================================== -->
+    <section id="final" class="screen">
+      <div class="final-screen">
+
+        <div id="countdown" class="countdown">3</div>
+
+        <div id="birthdayCelebration" class="birthday-celebration hidden">
+
+          <div class="firework firework-1">✨</div>
+          <div class="firework firework-2">✨</div>
+          <div class="firework firework-3">✨</div>
+
+          <p class="eyebrow">The Final Surprise</p>
+
+          <h1 class="birthday-title">
+            HAPPY<br>
+            <span>BIRTHDAY</span><br>
+            AMMA ❤️
+          </h1>
+
+          <p class="birthday-subtitle">
+            Today we celebrate you. ❤️
+          </p>
+
+          <div class="gift-area">
+
+            <div
+              id="giftBox"
+              class="gift-box"
+              onclick="openGift()">
+
+              <div class="gift-lid">
+                <div class="gift-ribbon"></div>
+              </div>
+
+              <div class="gift-body">
+                <div class="gift-ribbon"></div>
+              </div>
+
+              <div class="gift-bow">
+                🎀
+              </div>
+
+            </div>
+
+          </div>
+
+          <p id="giftHint" class="gift-hint">
+            Tap the gift box 🎁
+          </p>
+
+          <div id="giftReveal" class="gift-reveal hidden">
+
+            <div class="gift-icon">🎂💌</div>
+
+            <h2>
+              Your Birthday Gift
+            </h2>
+
+            <p>
+              A birthday celebration... and a birthday card
+              filled with all our love. ❤️
+            </p>
+
+            <div class="final-message">
+              <strong>
+                We love you, Amma. ❤️
+              </strong>
+                <br>
+              Today, tomorrow, forever.
+            </div>
+
+            <button class="main-btn" onclick="restartJourney()">
+              Experience It Again ❤️
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

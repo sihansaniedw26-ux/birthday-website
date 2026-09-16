@@ -94,11 +94,6 @@
       padding: 14px;
       cursor: pointer;
       background: white;
-      transition: 0.2s;
-    }
-
-    .theme-option:hover {
-      transform: translateY(-2px);
     }
 
     .theme-option input {
@@ -183,11 +178,33 @@
       margin-top: 15px;
     }
 
-    #photoPreview img {
+    .photo-box {
+      position: relative;
+    }
+
+    .photo-box img {
       width: 100%;
       height: 120px;
       object-fit: cover;
       border-radius: 12px;
+      display: block;
+    }
+
+    .photo-number {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      background: rgba(0,0,0,0.65);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .photo-count {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #9e3b3b;
     }
 
     .buttons {
@@ -269,7 +286,8 @@
   <p id="userEmail"></p>
 
 
-  <!-- BASIC DETAILS -->
+  <!-- BIRTHDAY DETAILS -->
+
   <div class="section">
 
     <h2>🎂 Birthday Details</h2>
@@ -284,7 +302,6 @@
       placeholder="Example: Amma"
     >
 
-
     <label for="birthdayDate">
       Birthday Date
     </label>
@@ -293,7 +310,6 @@
       id="birthdayDate"
       type="date"
     >
-
 
     <label for="secretCode">
       Secret Code
@@ -304,7 +320,6 @@
       type="text"
       placeholder="Example: 223010"
     >
-
 
     <label for="finalMessage">
       Final Message
@@ -319,12 +334,13 @@
 
 
   <!-- LETTER -->
+
   <div class="section">
 
     <h2>💌 Birthday Letter</h2>
 
     <p>
-      Write the special letter that will appear at the end of the journey.
+      Write the special letter that will appear at the end.
     </p>
 
     <textarea
@@ -335,7 +351,8 @@
   </div>
 
 
-  <!-- COLOR THEME -->
+  <!-- COLOR -->
+
   <div class="section">
 
     <h2>🎨 Choose Color Theme</h2>
@@ -353,7 +370,6 @@
         <div class="theme-preview pink"></div>
       </label>
 
-
       <label class="theme-option">
         <input
           type="radio"
@@ -363,7 +379,6 @@
         💜 Purple
         <div class="theme-preview purple"></div>
       </label>
-
 
       <label class="theme-option">
         <input
@@ -375,7 +390,6 @@
         <div class="theme-preview blue"></div>
       </label>
 
-
       <label class="theme-option">
         <input
           type="radio"
@@ -385,7 +399,6 @@
         💛 Gold
         <div class="theme-preview gold"></div>
       </label>
-
 
       <label class="theme-option">
         <input
@@ -403,6 +416,7 @@
 
 
   <!-- FONT -->
+
   <div class="section">
 
     <h2>✍️ Choose Font</h2>
@@ -419,7 +433,6 @@
         Romantic
       </label>
 
-
       <label class="font-option font-modern">
         <input
           type="radio"
@@ -429,7 +442,6 @@
         Modern
       </label>
 
-
       <label class="font-option font-elegant">
         <input
           type="radio"
@@ -438,7 +450,6 @@
         >
         Elegant
       </label>
-
 
       <label class="font-option font-playful">
         <input
@@ -455,12 +466,13 @@
 
 
   <!-- PHOTOS -->
+
   <div class="section">
 
     <h2>📸 Your Photos</h2>
 
     <p>
-      Choose up to <strong>15 photos</strong> for the birthday website.
+      Upload up to <strong>15 photos</strong>.
     </p>
 
     <input
@@ -474,12 +486,20 @@
       📷 Maximum 15 photos
     </div>
 
+    <div
+      id="photoCount"
+      class="photo-count"
+    >
+      0 / 15 photos
+    </div>
+
     <div id="photoPreview"></div>
 
   </div>
 
 
   <!-- BUTTONS -->
+
   <div class="buttons">
 
     <button id="saveBtn">
@@ -497,6 +517,7 @@
 
 
   <!-- PUBLIC LINK -->
+
   <div id="publicLink">
 
     🎉 Your birthday website:
@@ -546,12 +567,20 @@ const photoUpload =
 const photoPreview =
   document.getElementById("photoPreview");
 
+const photoCount =
+  document.getElementById("photoCount");
+
 
 let currentUser = null;
+
 let currentSite = null;
 
+let savedPhotoPaths = [];
 
-/* CREATE SLUG */
+
+/* =========================
+   SLUG
+========================= */
 
 function createSlug() {
 
@@ -564,7 +593,9 @@ function createSlug() {
 }
 
 
-/* GET SELECTED THEME */
+/* =========================
+   THEME
+========================= */
 
 function getSelectedTheme() {
 
@@ -579,7 +610,26 @@ function getSelectedTheme() {
 }
 
 
-/* GET SELECTED FONT */
+function setSelectedTheme(theme) {
+
+  if (!theme) return;
+
+  const radio =
+    document.querySelector(
+      'input[name="theme"][value="' +
+      theme +
+      '"]'
+    );
+
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+
+/* =========================
+   FONT
+========================= */
 
 function getSelectedFont() {
 
@@ -594,32 +644,15 @@ function getSelectedFont() {
 }
 
 
-/* SET THEME */
-
-function setSelectedTheme(theme) {
-
-  if (!theme) return;
-
-  const radio =
-    document.querySelector(
-      'input[name="theme"][value="' + theme + '"]'
-    );
-
-  if (radio) {
-    radio.checked = true;
-  }
-}
-
-
-/* SET FONT */
-
 function setSelectedFont(font) {
 
   if (!font) return;
 
   const radio =
     document.querySelector(
-      'input[name="font"][value="' + font + '"]'
+      'input[name="font"][value="' +
+      font +
+      '"]'
     );
 
   if (radio) {
@@ -628,7 +661,9 @@ function setSelectedFont(font) {
 }
 
 
-/* SHOW PUBLIC LINK */
+/* =========================
+   PUBLIC LINK
+========================= */
 
 function showPublicLink(slug) {
 
@@ -645,61 +680,296 @@ function showPublicLink(slug) {
 }
 
 
-/* PHOTO PREVIEW */
+/* =========================
+   PHOTO COUNT
+========================= */
+
+function updatePhotoCount(extraCount = 0) {
+
+  const total =
+    savedPhotoPaths.length +
+    extraCount;
+
+  photoCount.textContent =
+    total + " / 15 photos";
+
+}
+
+
+/* =========================
+   CREATE SIGNED URL
+========================= */
+
+async function getPhotoUrl(path) {
+
+  const result =
+    await supabaseClient
+      .storage
+      .from("birthday-photos")
+      .createSignedUrl(
+        path,
+        60 * 60
+      );
+
+  if (result.error) {
+
+    console.error(
+      "Photo URL error:",
+      result.error
+    );
+
+    return null;
+  }
+
+  return result.data.signedUrl;
+}
+
+
+/* =========================
+   SHOW SAVED PHOTOS
+========================= */
+
+async function showSavedPhotos() {
+
+  photoPreview.innerHTML = "";
+
+  if (
+    !savedPhotoPaths ||
+    savedPhotoPaths.length === 0
+  ) {
+
+    updatePhotoCount(0);
+
+    return;
+  }
+
+
+  for (
+    let i = 0;
+    i < savedPhotoPaths.length;
+    i++
+  ) {
+
+    const path =
+      savedPhotoPaths[i];
+
+    const url =
+      await getPhotoUrl(path);
+
+    if (!url) continue;
+
+
+    const box =
+      document.createElement("div");
+
+    box.className =
+      "photo-box";
+
+
+    const img =
+      document.createElement("img");
+
+    img.src = url;
+
+    img.alt =
+      "Birthday photo " +
+      (i + 1);
+
+
+    const number =
+      document.createElement("div");
+
+    number.className =
+      "photo-number";
+
+    number.textContent =
+      "#" + (i + 1);
+
+
+    box.appendChild(img);
+
+    box.appendChild(number);
+
+    photoPreview.appendChild(box);
+
+  }
+
+
+  updatePhotoCount(0);
+
+}
+
+
+/* =========================
+   SELECT NEW PHOTOS
+========================= */
 
 photoUpload.addEventListener(
   "change",
   function () {
 
-    photoPreview.innerHTML = "";
-
     const files =
-      Array.from(photoUpload.files);
+      Array.from(
+        photoUpload.files
+      );
 
-    if (files.length > 15) {
+
+    const remaining =
+      15 -
+      savedPhotoPaths.length;
+
+
+    if (files.length > remaining) {
 
       status.textContent =
-        "Please choose maximum 15 photos.";
+        "You can upload only " +
+        remaining +
+        " more photo(s).";
 
       photoUpload.value = "";
+
+      updatePhotoCount(0);
 
       return;
     }
 
-    files.forEach(function(file) {
 
-      const reader =
-        new FileReader();
+    status.textContent =
+      files.length +
+      " new photo(s) selected.";
 
-      reader.onload = function(event) {
 
-        const img =
-          document.createElement("img");
-
-        img.src =
-          event.target.result;
-
-        photoPreview.appendChild(img);
-
-      };
-
-      reader.readAsDataURL(file);
-
-    });
+    updatePhotoCount(
+      files.length
+    );
 
   }
 );
 
 
-/* LOAD DASHBOARD */
+/* =========================
+   UPLOAD PHOTOS
+========================= */
+
+async function uploadPhotos() {
+
+  const files =
+    Array.from(
+      photoUpload.files
+    );
+
+
+  if (files.length === 0) {
+
+    return [];
+
+  }
+
+
+  const uploadedPaths = [];
+
+
+  for (
+    let i = 0;
+    i < files.length;
+    i++
+  ) {
+
+    const file =
+      files[i];
+
+
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const fileName =
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2, 8) +
+      "-" +
+      i +
+      "." +
+      extension;
+
+
+    const filePath =
+      currentUser.id +
+      "/" +
+      fileName;
+
+
+    status.textContent =
+      "Uploading photo " +
+      (i + 1) +
+      " of " +
+      files.length +
+      "...";
+
+
+    const result =
+      await supabaseClient
+        .storage
+        .from("birthday-photos")
+        .upload(
+          filePath,
+          file,
+          {
+            cacheControl: "3600",
+            upsert: false
+          }
+        );
+
+
+    if (result.error) {
+
+      console.error(
+        "Upload error:",
+        result.error
+      );
+
+      throw new Error(
+        "Photo " +
+        (i + 1) +
+        " upload failed: " +
+        result.error.message
+      );
+
+    }
+
+
+    uploadedPaths.push(
+      filePath
+    );
+
+  }
+
+
+  return uploadedPaths;
+
+}
+
+
+/* =========================
+   LOAD DASHBOARD
+========================= */
 
 async function loadDashboard() {
 
   const {
-    data: { user },
+    data: {
+      user
+    },
     error
   } =
-    await supabaseClient.auth.getUser();
+    await supabaseClient
+      .auth
+      .getUser();
 
 
   if (error || !user) {
@@ -711,13 +981,15 @@ async function loadDashboard() {
   }
 
 
-  currentUser = user;
+  currentUser =
+    user;
 
 
   document.getElementById(
     "userEmail"
   ).textContent =
-    "Logged in as: " + user.email;
+    "Logged in as: " +
+    user.email;
 
 
   const {
@@ -727,7 +999,10 @@ async function loadDashboard() {
     await supabaseClient
       .from("birthday_sites")
       .select("*")
-      .eq("user_id", user.id)
+      .eq(
+        "user_id",
+        user.id
+      )
       .maybeSingle();
 
 
@@ -741,58 +1016,81 @@ async function loadDashboard() {
   }
 
 
-  if (data) {
+  if (!data) {
 
-    currentSite = data;
+    updatePhotoCount(0);
 
-
-    birthdayName.value =
-      data.birthday_name || "";
-
-
-    birthdayDate.value =
-      data.birthday_date || "";
+    return;
+  }
 
 
-    secretCode.value =
-      data.secret_code || "";
+  currentSite =
+    data;
 
 
-    finalMessage.value =
-      data.final_message || "";
+  birthdayName.value =
+    data.birthday_name || "";
 
 
-    letter.value =
-      data.letter || "";
+  birthdayDate.value =
+    data.birthday_date || "";
 
 
-    if (data.settings) {
-
-      setSelectedTheme(
-        data.settings.theme
-      );
-
-      setSelectedFont(
-        data.settings.font
-      );
-
-    }
+  secretCode.value =
+    data.secret_code || "";
 
 
-    if (data.slug) {
+  finalMessage.value =
+    data.final_message || "";
 
-      showPublicLink(
-        data.slug
-      );
+
+  letter.value =
+    data.letter || "";
+
+
+  if (data.settings) {
+
+    setSelectedTheme(
+      data.settings.theme
+    );
+
+
+    setSelectedFont(
+      data.settings.font
+    );
+
+
+    if (
+      Array.isArray(
+        data.settings.photos
+      )
+    ) {
+
+      savedPhotoPaths =
+        data.settings.photos;
 
     }
 
   }
 
+
+  if (data.slug) {
+
+    showPublicLink(
+      data.slug
+    );
+
+  }
+
+
+  await showSavedPhotos();
+
 }
 
 
-/* SAVE */
+/* =========================
+   SAVE EVERYTHING
+========================= */
 
 document.getElementById(
   "saveBtn"
@@ -800,106 +1098,189 @@ document.getElementById(
   "click",
   async function () {
 
-    if (!currentUser) return;
+    if (!currentUser) {
+
+      return;
+    }
 
 
-    status.textContent =
-      "Saving...";
+    try {
+
+      status.textContent =
+        "Saving...";
 
 
-    const settings = {
+      /*
+        Upload newly selected photos
+      */
 
-      theme:
-        getSelectedTheme(),
-
-      font:
-        getSelectedFont()
-
-    };
+      const newPhotoPaths =
+        await uploadPhotos();
 
 
-    const siteData = {
+      /*
+        Combine old + new photos
+      */
 
-      user_id:
-        currentUser.id,
-
-      birthday_name:
-        birthdayName.value.trim(),
-
-      birthday_date:
-        birthdayDate.value || null,
-
-      secret_code:
-        secretCode.value.trim(),
-
-      final_message:
-        finalMessage.value.trim(),
-
-      letter:
-        letter.value.trim(),
-
-      settings:
-        settings
-
-    };
+      const allPhotoPaths =
+        [
+          ...savedPhotoPaths,
+          ...newPhotoPaths
+        ];
 
 
-    let result;
+      if (allPhotoPaths.length > 15) {
+
+        throw new Error(
+          "Maximum 15 photos allowed."
+        );
+
+      }
 
 
-    if (currentSite) {
+      /*
+        Settings
+      */
 
-      result =
-        await supabaseClient
-          .from("birthday_sites")
-          .update(siteData)
-          .eq(
-            "id",
-            currentSite.id
-          )
-          .select()
-          .single();
+      const settings = {
 
-    } else {
+        theme:
+          getSelectedTheme(),
 
-      siteData.slug =
-        createSlug();
+        font:
+          getSelectedFont(),
+
+        photos:
+          allPhotoPaths
+
+      };
 
 
-      result =
-        await supabaseClient
-          .from("birthday_sites")
-          .insert(siteData)
-          .select()
-          .single();
+      /*
+        Main data
+      */
+
+      const siteData = {
+
+        user_id:
+          currentUser.id,
+
+        birthday_name:
+          birthdayName.value.trim(),
+
+        birthday_date:
+          birthdayDate.value ||
+          null,
+
+        secret_code:
+          secretCode.value.trim(),
+
+        final_message:
+          finalMessage.value.trim(),
+
+        letter:
+          letter.value.trim(),
+
+        settings:
+          settings
+
+      };
+
+
+      let result;
+
+
+      /*
+        UPDATE EXISTING
+      */
+
+      if (currentSite) {
+
+        result =
+          await supabaseClient
+            .from("birthday_sites")
+            .update(
+              siteData
+            )
+            .eq(
+              "id",
+              currentSite.id
+            )
+            .select()
+            .single();
+
+      }
+
+
+      /*
+        CREATE NEW
+      */
+
+      else {
+
+        siteData.slug =
+          createSlug();
+
+
+        result =
+          await supabaseClient
+            .from("birthday_sites")
+            .insert(
+              siteData
+            )
+            .select()
+            .single();
+
+      }
+
+
+      if (result.error) {
+
+        throw new Error(
+          result.error.message
+        );
+
+      }
+
+
+      currentSite =
+        result.data;
+
+
+      savedPhotoPaths =
+        allPhotoPaths;
+
+
+      photoUpload.value =
+        "";
+
+
+      status.textContent =
+        "Saved successfully! ❤️";
+
+
+      if (currentSite.slug) {
+
+        showPublicLink(
+          currentSite.slug
+        );
+
+      }
+
+
+      await showSavedPhotos();
 
     }
 
 
-    if (result.error) {
+    catch (error) {
+
+      console.error(error);
+
 
       status.textContent =
         "Error: " +
-        result.error.message;
-
-      return;
-
-    }
-
-
-    currentSite =
-      result.data;
-
-
-    status.textContent =
-      "Saved successfully! ❤️";
-
-
-    if (currentSite.slug) {
-
-      showPublicLink(
-        currentSite.slug
-      );
+        error.message;
 
     }
 
@@ -907,7 +1288,9 @@ document.getElementById(
 );
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
 document.getElementById(
   "logoutBtn"
@@ -915,7 +1298,9 @@ document.getElementById(
   "click",
   async function () {
 
-    await supabaseClient.auth.signOut();
+    await supabaseClient
+      .auth
+      .signOut();
 
     window.location.href =
       "login.html";
@@ -924,7 +1309,9 @@ document.getElementById(
 );
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
 loadDashboard();
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday ❤️</title>
+</head>
+<body>
+
+  <h1 id="name">Happy Birthday ❤️</h1>
+  <p id="message"></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+
+  <script>
+    async function loadBirthday() {
+      const { data, error } = await supabaseClient
+        .from("birthday_sites")
+        .select("birthday_name, final_message")
+        .eq("slug", "amma123")
+        .single();
+
+      if (error) {
+        document.body.innerHTML = "<h1>Birthday page not found</h1>";
+        return;
+      }
+
+      document.getElementById("name").textContent =
+        "Happy Birthday " + data.birthday_name + " ❤️";
+
+      document.getElementById("message").textContent =
+        data.final_message || "";
+    }
+
+    loadBirthday();
+  </script>
+
+</body>
+</html>

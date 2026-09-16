@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Happy Birthday Patiyoo</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #160d1d;
+      color: white;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #d25353;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h1>Create Account ❤️</h1>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button onclick="signup()">
+      Create Account
+    </button>
+
+    <p id="message"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+    async function signup() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      if (!email || !password) {
+        message.textContent = "Please enter email and password.";
+        return;
+      }
+
+      if (password.length < 6) {
+        message.textContent = "Password must be at least 6 characters.";
+        return;
+      }
+
+      const { data, error } =
+        await supabaseClient.auth.signUp({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      message.textContent =
+        "Account created! Please check your email to confirm your account.";
+    }
+  </script>
+
+</body>
+</html>

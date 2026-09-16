@@ -40,58 +40,339 @@ let wheelRotation = 0;
 
 
 /* =====================================================
+   CUSTOMER SETTINGS
+===================================================== */
+
+const CUSTOMER_SETTINGS =
+  BIRTHDAY.settings || {};
+
+const CUSTOMER_THEME =
+  CUSTOMER_SETTINGS.theme || "pink";
+
+const CUSTOMER_FONT =
+  CUSTOMER_SETTINGS.font || "romantic";
+
+const CUSTOMER_PHOTOS =
+  Array.isArray(CUSTOMER_SETTINGS.photos)
+    ? CUSTOMER_SETTINGS.photos
+    : [];
+
+
+/* =====================================================
+   THEME + FONT
+===================================================== */
+
+function applyCustomerTheme() {
+
+  const themes = {
+
+    pink: {
+      primary: "#ea7b7b",
+      secondary: "#9e3b3b",
+      accent: "#f4d28a",
+      glow: "rgba(234,123,123,0.35)"
+    },
+
+    purple: {
+      primary: "#9b7bea",
+      secondary: "#573b9e",
+      accent: "#e8c7ff",
+      glow: "rgba(155,123,234,0.35)"
+    },
+
+    blue: {
+      primary: "#6faee8",
+      secondary: "#315d91",
+      accent: "#c7e8ff",
+      glow: "rgba(111,174,232,0.35)"
+    },
+
+    gold: {
+      primary: "#d9a441",
+      secondary: "#8d6420",
+      accent: "#ffe6a3",
+      glow: "rgba(217,164,65,0.35)"
+    },
+
+    green: {
+      primary: "#69b58a",
+      secondary: "#367154",
+      accent: "#c8f1d9",
+      glow: "rgba(105,181,138,0.35)"
+    }
+
+  };
+
+  const theme =
+    themes[CUSTOMER_THEME] ||
+    themes.pink;
+
+  const root =
+    document.documentElement;
+
+  root.style.setProperty(
+    "--customer-primary",
+    theme.primary
+  );
+
+  root.style.setProperty(
+    "--customer-secondary",
+    theme.secondary
+  );
+
+  root.style.setProperty(
+    "--customer-accent",
+    theme.accent
+  );
+
+  root.style.setProperty(
+    "--customer-glow",
+    theme.glow
+  );
+
+
+  /*
+     Add dynamic theme rules.
+  */
+
+  const oldStyle =
+    document.getElementById(
+      "customer-theme-style"
+    );
+
+  if (oldStyle) {
+    oldStyle.remove();
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "customer-theme-style";
+
+  style.textContent = `
+
+    .main-btn {
+      background:
+        linear-gradient(
+          135deg,
+          ${theme.primary},
+          ${theme.secondary}
+        ) !important;
+    }
+
+    .journey-track > div,
+    #questionProgress,
+    #scratchProgress,
+    #heartProgress {
+      background:
+        linear-gradient(
+          90deg,
+          ${theme.primary},
+          ${theme.accent}
+        ) !important;
+    }
+
+    .journey-bar {
+      box-shadow:
+        0 0 30px ${theme.glow};
+    }
+
+    .mission-icon,
+    .eyebrow {
+      color:
+        ${theme.primary} !important;
+    }
+
+    .answer-card.selected {
+      border-color:
+        ${theme.primary} !important;
+
+      box-shadow:
+        0 0 20px ${theme.glow} !important;
+    }
+
+    .code-input:focus {
+      border-color:
+        ${theme.primary} !important;
+    }
+
+    .game-heart {
+      filter:
+        drop-shadow(
+          0 0 10px ${theme.glow}
+        );
+    }
+
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+/* =====================================================
+   FONT
+===================================================== */
+
+function applyCustomerFont() {
+
+  const fonts = {
+
+    romantic:
+      "'Pacifico', cursive",
+
+    modern:
+      "'Fredoka', sans-serif",
+
+    elegant:
+      "Georgia, serif",
+
+    playful:
+      "'Fredoka', sans-serif"
+
+  };
+
+  const selectedFont =
+    fonts[CUSTOMER_FONT] ||
+    fonts.romantic;
+
+  document.body.style.fontFamily =
+    selectedFont;
+
+  const oldStyle =
+    document.getElementById(
+      "customer-font-style"
+    );
+
+  if (oldStyle) {
+    oldStyle.remove();
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "customer-font-style";
+
+  style.textContent = `
+
+    body,
+    button,
+    input,
+    textarea {
+      font-family:
+        ${selectedFont} !important;
+    }
+
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+/* =====================================================
    BIRTHDAY DATA
 ===================================================== */
 
 function applyBirthdayData() {
 
-  const birthday = window.BIRTHDAY_DATA;
+  const birthday =
+    window.BIRTHDAY_DATA;
 
   if (!birthday) return;
 
   const name =
-    birthday.birthday_name || "Amma";
+    birthday.birthday_name ||
+    "Amma";
+
+
+  /* PAGE TITLE */
 
   document.title =
     `Happy Birthday ${name} ❤️`;
 
+
+  /* ALL DYNAMIC NAMES */
+
   document
-    .querySelectorAll("[data-birthday-name]")
+    .querySelectorAll(
+      "[data-birthday-name]"
+    )
     .forEach(element => {
-      element.textContent = name;
+
+      element.textContent =
+        name;
+
     });
 
+
+  /* FINAL MESSAGE */
+
   const finalMessage =
-    document.getElementById("finalMessage");
+    document.getElementById(
+      "finalMessage"
+    );
 
-  if (finalMessage && birthday.final_message) {
+  if (
+    finalMessage &&
+    birthday.final_message
+  ) {
 
-    finalMessage.innerHTML =
-      birthday.final_message
-        .replace(/\n/g, "<br>");
+    finalMessage.innerHTML = `
+      <strong>
+        ${escapeHtml(
+          birthday.final_message
+        )}
+      </strong>
+    `;
+
   }
 
-  /*
-     ONE LETTER ONLY
-  */
+
+  /* LETTER */
 
   const letterContent =
     document.getElementById(
       "dynamicLetterContent"
     );
 
-  if (letterContent && birthday.letter) {
+  if (
+    letterContent &&
+    birthday.letter
+  ) {
 
     letterContent.innerHTML = `
       <p>
-        ${birthday.letter.replace(/\n/g, "<br>")}
-      </p>
-
-      <p class="signature">
-        Forever yours ❤️
+        ${escapeHtml(
+          birthday.letter
+        ).replace(/\n/g, "<br>")}
       </p>
     `;
+
   }
+
+
+  /* APPLY CUSTOMER SETTINGS */
+
+  applyCustomerTheme();
+
+  applyCustomerFont();
+
+}
+
+
+/* =====================================================
+   SAFE TEXT
+===================================================== */
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
@@ -102,9 +383,13 @@ function applyBirthdayData() {
 function createParticles() {
 
   const container =
-    document.getElementById("particles");
+    document.getElementById(
+      "particles"
+    );
 
   if (!container) return;
+
+  container.innerHTML = "";
 
   for (let i = 0; i < 45; i++) {
 
@@ -135,7 +420,9 @@ function createParticles() {
     particle.style.height =
       size + "px";
 
-    container.appendChild(particle);
+    container.appendChild(
+      particle
+    );
   }
 }
 
@@ -153,19 +440,28 @@ function goTo(id) {
 
   if (index === -1) return;
 
-  currentScreenIndex = index;
+  currentScreenIndex =
+    index;
 
   document
     .querySelectorAll(".screen")
     .forEach(screen => {
-      screen.classList.remove("active");
+
+      screen.classList.remove(
+        "active"
+      );
+
     });
 
   const screen =
     document.getElementById(id);
 
   if (screen) {
-    screen.classList.add("active");
+
+    screen.classList.add(
+      "active"
+    );
+
   }
 
   updateJourneyProgress();
@@ -175,18 +471,32 @@ function goTo(id) {
     behavior: "smooth"
   });
 
+
   if (id === "scratch") {
-    setTimeout(initScratchCard, 150);
+
+    setTimeout(
+      initScratchCard,
+      150
+    );
+
   }
+
 
   if (id === "quiz") {
+
     renderQuestion();
+
   }
 
+
   if (id === "memories") {
+
     renderMemories();
+
   }
+
 }
+
 
 function updateJourneyProgress() {
 
@@ -205,19 +515,26 @@ function updateJourneyProgress() {
     );
 
   if (progressBar) {
+
     progressBar.style.width =
       progress + "%";
+
   }
 
   if (journeyText) {
 
     journeyText.textContent =
       `${currentScreenIndex + 1} / ${journey.length} • ${journey[currentScreenIndex][1]}`;
+
   }
+
 }
 
+
 function startJourney() {
+
   goTo("code");
+
 }
 
 
@@ -254,7 +571,9 @@ function initCodeInputs() {
             codeInputs[
               index + 1
             ].focus();
+
           }
+
         }
       );
 
@@ -271,18 +590,25 @@ function initCodeInputs() {
             codeInputs[
               index - 1
             ].focus();
+
           }
 
           if (
             event.key === "Enter"
           ) {
+
             checkCode();
+
           }
+
         }
       );
+
     }
   );
+
 }
+
 
 function checkCode() {
 
@@ -293,7 +619,9 @@ function checkCode() {
 
   const enteredCode =
     [...codeInputs]
-      .map(input => input.value)
+      .map(
+        input => input.value
+      )
       .join("");
 
   const error =
@@ -301,7 +629,10 @@ function checkCode() {
       "codeError"
     );
 
-  if (enteredCode === SECRET_CODE) {
+  if (
+    enteredCode ===
+    SECRET_CODE
+  ) {
 
     if (error) {
 
@@ -309,7 +640,8 @@ function checkCode() {
         "Unlocked! ❤️";
 
       error.style.color =
-        "#f4d28a";
+        "var(--customer-accent, #f4d28a)";
+
     }
 
     codeInputs.forEach(
@@ -322,7 +654,7 @@ function checkCode() {
               "rgba(234,123,123,0.25)";
 
             input.style.borderColor =
-              "#f4d28a";
+              "var(--customer-accent, #f4d28a)";
 
             input.style.transform =
               "scale(1.08)";
@@ -330,6 +662,7 @@ function checkCode() {
           },
           index * 80
         );
+
       }
     );
 
@@ -337,6 +670,7 @@ function checkCode() {
       () => {
 
         goTo("puzzle");
+
         initJigsaw();
 
       },
@@ -349,6 +683,7 @@ function checkCode() {
 
       error.textContent =
         "Hmm... that's not it. Try again ❤️";
+
     }
 
     codeInputs.forEach(
@@ -377,10 +712,14 @@ function checkCode() {
             duration: 300
           }
         );
+
       }
     );
+
   }
+
 }
+
 
 function showHint() {
 
@@ -392,8 +731,10 @@ function showHint() {
   if (hint) {
 
     hint.textContent =
-      "Hint: Most important in u life • 3 birthdays • code is 223010 ❤️";
+      `Hint: The special code is ${SECRET_CODE} ❤️`;
+
   }
+
 }
 
 
@@ -452,10 +793,43 @@ function initJigsaw() {
     );
 
     puzzlePieces.push(piece);
+
   }
 
+  applyPuzzleImage();
+
   shuffleJigsaw();
+
 }
+
+
+async function applyPuzzleImage() {
+
+  const firstPhoto =
+    CUSTOMER_PHOTOS[0];
+
+  if (!firstPhoto) return;
+
+  const url =
+    await getPhotoUrl(
+      firstPhoto
+    );
+
+  if (!url) return;
+
+  document
+    .querySelectorAll(
+      ".jigsaw-piece"
+    )
+    .forEach(piece => {
+
+      piece.style.backgroundImage =
+        `url("${url}")`;
+
+    });
+
+}
+
 
 function selectJigsawPiece(piece) {
 
@@ -471,6 +845,7 @@ function selectJigsawPiece(piece) {
     );
 
     return;
+
   }
 
   if (
@@ -481,9 +856,11 @@ function selectJigsawPiece(piece) {
       "selected"
     );
 
-    selectedPuzzlePiece = null;
+    selectedPuzzlePiece =
+      null;
 
     return;
+
   }
 
   const firstIndex =
@@ -492,7 +869,9 @@ function selectJigsawPiece(piece) {
     );
 
   const secondIndex =
-    puzzlePieces.indexOf(piece);
+    puzzlePieces.indexOf(
+      piece
+    );
 
   [
     puzzlePieces[firstIndex],
@@ -510,7 +889,8 @@ function selectJigsawPiece(piece) {
   board.innerHTML = "";
 
   puzzlePieces.forEach(
-    p => board.appendChild(p)
+    p =>
+      board.appendChild(p)
   );
 
   selectedPuzzlePiece.classList.remove(
@@ -521,10 +901,13 @@ function selectJigsawPiece(piece) {
     "selected"
   );
 
-  selectedPuzzlePiece = null;
+  selectedPuzzlePiece =
+    null;
 
   checkJigsaw();
+
 }
+
 
 function shuffleJigsaw() {
 
@@ -537,21 +920,24 @@ function shuffleJigsaw() {
     !board ||
     puzzlePieces.length === 0
   ) {
+
     return;
+
   }
 
-  selectedPuzzlePiece = null;
+  selectedPuzzlePiece =
+    null;
 
   puzzlePieces.forEach(
-    piece => {
+    piece =>
       piece.classList.remove(
         "selected"
-      );
-    }
+      )
   );
 
   for (
-    let i = puzzlePieces.length - 1;
+    let i =
+      puzzlePieces.length - 1;
     i > 0;
     i--
   ) {
@@ -568,12 +954,14 @@ function shuffleJigsaw() {
       puzzlePieces[j],
       puzzlePieces[i]
     ];
+
   }
 
   board.innerHTML = "";
 
   puzzlePieces.forEach(
-    piece => board.appendChild(piece)
+    piece =>
+      board.appendChild(piece)
   );
 
   if (isJigsawSolved()) {
@@ -581,10 +969,13 @@ function shuffleJigsaw() {
     shuffleJigsaw();
 
     return;
+
   }
 
   updatePuzzleStatus();
+
 }
+
 
 function isJigsawSolved() {
 
@@ -601,7 +992,9 @@ function isJigsawSolved() {
         piece.dataset.correct
       ) === index
   );
+
 }
+
 
 function updatePuzzleStatus() {
 
@@ -635,7 +1028,9 @@ function updatePuzzleStatus() {
         piece.classList.remove(
           "correct"
         );
+
       }
+
     }
   );
 
@@ -648,8 +1043,11 @@ function updatePuzzleStatus() {
 
     status.textContent =
       `${correct} / 9 pieces in place`;
+
   }
+
 }
+
 
 function checkJigsaw() {
 
@@ -666,6 +1064,7 @@ function checkJigsaw() {
 
       status.textContent =
         "9 / 9 pieces in place — Perfect! ❤️";
+
     }
 
     const continueButton =
@@ -678,6 +1077,7 @@ function checkJigsaw() {
       continueButton.classList.remove(
         "hidden"
       );
+
     }
 
     document
@@ -706,9 +1106,12 @@ function checkJigsaw() {
               duration: 500
             }
           );
+
         }
       );
+
   }
+
 }
 
 
@@ -718,7 +1121,8 @@ function checkJigsaw() {
 
 function initScratchCard() {
 
-  if (scratchInitialized) return;
+  if (scratchInitialized)
+    return;
 
   const canvas =
     document.getElementById(
@@ -730,9 +1134,11 @@ function initScratchCard() {
       ".scratch-container"
     );
 
-  if (!canvas || !container) return;
+  if (!canvas || !container)
+    return;
 
-  scratchInitialized = true;
+  scratchInitialized =
+    true;
 
   const rect =
     container.getBoundingClientRect();
@@ -818,6 +1224,7 @@ function initScratchCard() {
       1 + Math.random() * 5,
       1 + Math.random() * 5
     );
+
   }
 
   ctx.fillStyle =
@@ -846,7 +1253,9 @@ function initScratchCard() {
       !scratching ||
       scratchDone
     ) {
+
       return;
+
     }
 
     const bounds =
@@ -873,6 +1282,7 @@ function initScratchCard() {
 
       clientY =
         event.clientY;
+
     }
 
     const scaleX =
@@ -904,6 +1314,7 @@ function initScratchCard() {
     ctx.fill();
 
     checkScratchPercentage();
+
   }
 
   canvas.addEventListener(
@@ -933,6 +1344,7 @@ function initScratchCard() {
       );
 
       scratch(event);
+
     }
   );
 
@@ -952,18 +1364,22 @@ function initScratchCard() {
     () =>
       scratching = false
   );
+
 }
+
 
 function checkScratchPercentage() {
 
-  if (scratchDone) return;
+  if (scratchDone)
+    return;
 
   const canvas =
     document.getElementById(
       "scratchCanvas"
     );
 
-  if (!canvas) return;
+  if (!canvas)
+    return;
 
   const ctx =
     canvas.getContext("2d");
@@ -1017,11 +1433,15 @@ function checkScratchPercentage() {
       if (
         imageData[index + 3] < 80
       ) {
+
         transparent++;
+
       }
 
       samples++;
+
     }
+
   }
 
   const percentage =
@@ -1046,6 +1466,7 @@ function checkScratchPercentage() {
         100,
         percentage * 2.5
       ) + "%";
+
   }
 
   if (percentText) {
@@ -1054,6 +1475,7 @@ function checkScratchPercentage() {
       percentage < 25
         ? `Keep scratching... ${percentage}% ✨`
         : "You found the secret! ❤️";
+
   }
 
   if (percentage >= 25) {
@@ -1061,8 +1483,10 @@ function checkScratchPercentage() {
     scratchDone = true;
 
     if (progress) {
+
       progress.style.width =
         "100%";
+
     }
 
     const continueButton =
@@ -1075,6 +1499,7 @@ function checkScratchPercentage() {
       continueButton.classList.remove(
         "hidden"
       );
+
     }
 
     setTimeout(
@@ -1090,7 +1515,9 @@ function checkScratchPercentage() {
       },
       300
     );
+
   }
+
 }
 
 
@@ -1192,14 +1619,17 @@ const questions = [
       "What is your favourite family memory that you will never forget? ❤️",
     open: true
   }
+
 ];
+
 
 function renderQuestion() {
 
   const question =
     questions[quizIndex];
 
-  if (!question) return;
+  if (!question)
+    return;
 
   const questionNumber =
     document.getElementById(
@@ -1225,21 +1655,25 @@ function renderQuestion() {
 
     questionNumber.textContent =
       `Question ${quizIndex + 1} of 10`;
+
   }
 
   if (questionProgress) {
 
     questionProgress.style.width =
       `${((quizIndex + 1) / 10) * 100}%`;
+
   }
 
   if (questionText) {
 
     questionText.textContent =
       question.text;
+
   }
 
-  if (!area) return;
+  if (!area)
+    return;
 
   area.innerHTML = "";
 
@@ -1265,6 +1699,7 @@ function renderQuestion() {
 
         quizAnswers[quizIndex] =
           textarea.value;
+
       }
     );
 
@@ -1301,13 +1736,16 @@ function renderQuestion() {
           button.classList.add(
             "selected"
           );
+
         }
 
         button.innerHTML = `
           <span class="answer-letter">
-            ${String.fromCharCode(65 + index)}
+            ${String.fromCharCode(
+              65 + index
+            )}
           </span>
-          ${option}
+          ${escapeHtml(option)}
         `;
 
         button.addEventListener(
@@ -1322,12 +1760,14 @@ function renderQuestion() {
         answers.appendChild(
           button
         );
+
       }
     );
 
     area.appendChild(
       answers
     );
+
   }
 
   const previous =
@@ -1346,6 +1786,7 @@ function renderQuestion() {
       quizIndex === 0
         ? "hidden"
         : "visible";
+
   }
 
   if (next) {
@@ -1354,8 +1795,11 @@ function renderQuestion() {
       quizIndex === 9
         ? "Finish Quiz ❤️"
         : "Next ❤️";
+
   }
+
 }
+
 
 function selectAnswer(
   answer,
@@ -1384,13 +1828,17 @@ function selectAnswer(
     () => {
 
       if (quizIndex < 9) {
+
         nextQuestion();
+
       }
 
     },
     450
   );
+
 }
+
 
 function nextQuestion() {
 
@@ -1403,6 +1851,7 @@ function nextQuestion() {
 
     quizAnswers[quizIndex] =
       textarea.value;
+
   }
 
   if (quizIndex < 9) {
@@ -1414,8 +1863,11 @@ function nextQuestion() {
   } else {
 
     goTo("memories");
+
   }
+
 }
+
 
 function previousQuestion() {
 
@@ -1430,12 +1882,94 @@ function previousQuestion() {
 
       quizAnswers[quizIndex] =
         textarea.value;
+
     }
 
     quizIndex--;
 
     renderQuestion();
+
   }
+
+}
+
+
+/* =====================================================
+   PHOTO URL
+===================================================== */
+
+async function getPhotoUrl(
+  photoPath
+) {
+
+  if (!photoPath)
+    return null;
+
+  /*
+     If dashboard ever stores a complete URL,
+     use it directly.
+  */
+
+  if (
+    photoPath.startsWith(
+      "http://"
+    ) ||
+    photoPath.startsWith(
+      "https://"
+    )
+  ) {
+
+    return photoPath;
+
+  }
+
+
+  /*
+     For Supabase Storage.
+  */
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .storage
+        .from("birthday-photos")
+        .createSignedUrl(
+          photoPath,
+          3600
+        );
+
+    if (
+      error ||
+      !data ||
+      !data.signedUrl
+    ) {
+
+      console.warn(
+        "Photo URL error:",
+        error
+      );
+
+      return null;
+
+    }
+
+    return data.signedUrl;
+
+  } catch (error) {
+
+    console.warn(
+      "Photo loading error:",
+      error
+    );
+
+    return null;
+
+  }
+
 }
 
 
@@ -1443,24 +1977,90 @@ function previousQuestion() {
    MEMORIES
 ===================================================== */
 
-function renderMemories() {
+async function renderMemories() {
 
   const grid =
     document.getElementById(
       "memoryGrid"
     );
 
-  if (!grid) return;
-
-  if (grid.children.length > 0) {
+  if (!grid)
     return;
+
+
+  /*
+     IMPORTANT:
+     Remove the old hard-coded
+     38 photos.
+  */
+
+  grid.innerHTML = "";
+
+
+  /*
+     If customer has no photos.
+  */
+
+  if (
+    CUSTOMER_PHOTOS.length === 0
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+    empty.className =
+      "memory-empty";
+
+    empty.innerHTML = `
+      <div style="
+        padding:40px 20px;
+        text-align:center;
+        opacity:.8;
+      ">
+        <div style="
+          font-size:48px;
+          margin-bottom:15px;
+        ">
+          📸
+        </div>
+
+        <p>
+          Our beautiful memories ❤️
+        </p>
+      </div>
+    `;
+
+    grid.appendChild(
+      empty
+    );
+
+    return;
+
   }
 
+
+  /*
+     Load customer photos.
+  */
+
   for (
-    let i = 2;
-    i <= 26;
+    let i = 0;
+    i < CUSTOMER_PHOTOS.length;
     i++
   ) {
+
+    const path =
+      CUSTOMER_PHOTOS[i];
+
+    const url =
+      await getPhotoUrl(
+        path
+      );
+
+    if (!url)
+      continue;
 
     const card =
       document.createElement(
@@ -1470,56 +2070,21 @@ function renderMemories() {
     card.className =
       "memory-card";
 
+
     const image =
       document.createElement(
         "img"
       );
 
     image.src =
-      `${i}.jpg`;
+      url;
 
     image.alt =
-      `Family memory ${i - 1}`;
+      `Memory ${i + 1}`;
 
     image.loading =
       "lazy";
 
-    image.onerror =
-      function () {
-
-        this.style.display =
-          "none";
-
-        card.style.background =
-          "linear-gradient(135deg,#9E3B3B,#EA7B7B)";
-
-        const placeholder =
-          document.createElement(
-            "div"
-          );
-
-        placeholder.style.height =
-          "100%";
-
-        placeholder.style.display =
-          "grid";
-
-        placeholder.style.placeItems =
-          "center";
-
-        placeholder.style.color =
-          "white";
-
-        placeholder.style.fontSize =
-          "13px";
-
-        placeholder.innerHTML =
-          `❤️<br>Memory ${i - 1}`;
-
-        card.appendChild(
-          placeholder
-        );
-      };
 
     const overlay =
       document.createElement(
@@ -1530,7 +2095,13 @@ function renderMemories() {
       "memory-overlay";
 
     overlay.textContent =
-      `Memory ${String(i - 1).padStart(2, "0")} ❤️`;
+      `Memory ${String(
+        i + 1
+      ).padStart(
+        2,
+        "0"
+      )} ❤️`;
+
 
     card.appendChild(
       image
@@ -1540,27 +2111,26 @@ function renderMemories() {
       overlay
     );
 
+
     card.addEventListener(
       "click",
       () => {
 
-        if (
-          image.style.display !==
-          "none"
-        ) {
+        openLightbox(
+          url,
+          `Memory ${i + 1} ❤️`
+        );
 
-          openLightbox(
-            image.src,
-            `Memory ${i - 1} ❤️`
-          );
-        }
       }
     );
+
 
     grid.appendChild(
       card
     );
+
   }
+
 }
 
 
@@ -1578,7 +2148,8 @@ function openLightbox(
       "lightbox"
     );
 
-  if (!lightbox) return;
+  if (!lightbox)
+    return;
 
   const lightboxImage =
     document.getElementById(
@@ -1594,19 +2165,23 @@ function openLightbox(
 
     lightboxImage.src =
       src;
+
   }
 
   if (lightboxCaption) {
 
     lightboxCaption.textContent =
       caption || "";
+
   }
 
   lightbox.classList.add(
     "active",
     "show"
   );
+
 }
+
 
 function closeLightbox(event) {
 
@@ -1615,7 +2190,8 @@ function closeLightbox(event) {
       "lightbox"
     );
 
-  if (!lightbox) return;
+  if (!lightbox)
+    return;
 
   if (
     !event ||
@@ -1633,15 +2209,22 @@ function closeLightbox(event) {
       "active",
       "show"
     );
+
   }
+
 }
+
 
 document.addEventListener(
   "keydown",
   event => {
 
-    if (event.key === "Escape") {
+    if (
+      event.key === "Escape"
+    ) {
+
       closeLightbox();
+
     }
 
   }
@@ -1658,7 +2241,8 @@ function startHeartGame() {
 
   heartsCaught = 0;
 
-  heartGameStarted = false;
+  heartGameStarted =
+    false;
 
   updateHeartScore();
 
@@ -1676,6 +2260,7 @@ function startHeartGame() {
 
     message.textContent =
       "Catch 5 hearts! ❤️";
+
   }
 
   if (continueButton) {
@@ -1683,19 +2268,23 @@ function startHeartGame() {
     continueButton.classList.add(
       "hidden"
     );
+
   }
 
   setTimeout(
     () => {
 
-      heartGameStarted = true;
+      heartGameStarted =
+        true;
 
       startHeartSpawner();
 
     },
     500
   );
+
 }
+
 
 function updateHeartScore() {
 
@@ -1713,14 +2302,18 @@ function updateHeartScore() {
 
     score.textContent =
       heartsCaught;
+
   }
 
   if (progress) {
 
     progress.style.width =
       `${(heartsCaught / 5) * 100}%`;
+
   }
+
 }
+
 
 function startHeartSpawner() {
 
@@ -1729,6 +2322,7 @@ function startHeartSpawner() {
     clearInterval(
       heartTimer
     );
+
   }
 
   spawnHeart();
@@ -1737,13 +2331,16 @@ function startHeartSpawner() {
     setInterval(
       () => {
 
-        if (heartsCaught >= 5) {
+        if (
+          heartsCaught >= 5
+        ) {
 
           clearInterval(
             heartTimer
           );
 
           return;
+
         }
 
         spawnHeart();
@@ -1751,7 +2348,9 @@ function startHeartSpawner() {
       },
       900
     );
+
 }
+
 
 function spawnHeart() {
 
@@ -1764,7 +2363,9 @@ function spawnHeart() {
     !arena ||
     heartsCaught >= 5
   ) {
+
     return;
+
   }
 
   const heart =
@@ -1821,11 +2422,16 @@ function spawnHeart() {
 
       event.preventDefault();
 
-      if (!heartGameStarted) {
+      if (
+        !heartGameStarted
+      ) {
+
         return;
+
       }
 
       catchHeart(heart);
+
     }
   );
 
@@ -1837,18 +2443,26 @@ function spawnHeart() {
     () => {
 
       if (heart.parentNode) {
+
         heart.remove();
+
       }
 
     },
     2600
   );
+
 }
+
 
 function catchHeart(heart) {
 
-  if (heart.dataset.caught) {
+  if (
+    heart.dataset.caught
+  ) {
+
     return;
+
   }
 
   heart.dataset.caught =
@@ -1860,7 +2474,9 @@ function catchHeart(heart) {
 
   updateHeartScore();
 
-  if (heartsCaught >= 5) {
+  if (
+    heartsCaught >= 5
+  ) {
 
     heartGameStarted =
       false;
@@ -1870,6 +2486,7 @@ function catchHeart(heart) {
       clearInterval(
         heartTimer
       );
+
     }
 
     const message =
@@ -1886,6 +2503,7 @@ function catchHeart(heart) {
 
       message.textContent =
         "You caught all the love! ❤️🎉";
+
     }
 
     if (continueButton) {
@@ -1893,6 +2511,7 @@ function catchHeart(heart) {
       continueButton.classList.remove(
         "hidden"
       );
+
     }
 
   } else {
@@ -1906,8 +2525,11 @@ function catchHeart(heart) {
 
       message.textContent =
         `${5 - heartsCaught} more to go! 💕`;
+
     }
+
   }
+
 }
 
 
@@ -1932,15 +2554,17 @@ const wheelResults = [
   "Make a birthday wish! ✨",
 
   "One more surprise is waiting! 🎁"
+
 ];
+
 
 function spinWheel() {
 
-  if (wheelSpinning) {
+  if (wheelSpinning)
     return;
-  }
 
-  wheelSpinning = true;
+  wheelSpinning =
+    true;
 
   const wheel =
     document.getElementById(
@@ -1964,15 +2588,18 @@ function spinWheel() {
 
   if (!wheel) {
 
-    wheelSpinning = false;
+    wheelSpinning =
+      false;
 
     return;
+
   }
 
   if (result) {
 
     result.textContent =
       "Spinning... 🎡❤️";
+
   }
 
   const resultIndex =
@@ -1982,7 +2609,9 @@ function spinWheel() {
     );
 
   const segmentCenter =
-    resultIndex * 45 + 22.5;
+    resultIndex *
+      45 +
+    22.5;
 
   const extraSpins =
     360 *
@@ -2009,7 +2638,10 @@ function spinWheel() {
       if (result) {
 
         result.textContent =
-          wheelResults[resultIndex];
+          wheelResults[
+            resultIndex
+          ];
+
       }
 
       if (spinButton) {
@@ -2017,6 +2649,7 @@ function spinWheel() {
         spinButton.classList.add(
           "hidden"
         );
+
       }
 
       if (continueButton) {
@@ -2024,13 +2657,16 @@ function spinWheel() {
         continueButton.classList.remove(
           "hidden"
         );
+
       }
 
-      wheelSpinning = false;
+      wheelSpinning =
+        false;
 
     },
     5100
   );
+
 }
 
 
@@ -2040,8 +2676,12 @@ function spinWheel() {
 
 function openEnvelope(type) {
 
-  if (type !== "letter") {
+  if (
+    type !== "letter"
+  ) {
+
     return;
+
   }
 
   const envelope =
@@ -2054,8 +2694,13 @@ function openEnvelope(type) {
       "letterContent"
     );
 
-  if (!envelope || !letter) {
+  if (
+    !envelope ||
+    !letter
+  ) {
+
     return;
+
   }
 
   if (
@@ -2063,7 +2708,9 @@ function openEnvelope(type) {
       "opened"
     )
   ) {
+
     return;
+
   }
 
   envelope.classList.add(
@@ -2092,6 +2739,7 @@ function openEnvelope(type) {
     },
     750
   );
+
 }
 
 
@@ -2113,8 +2761,13 @@ function startFinalReveal() {
       "birthdayCelebration"
     );
 
-  if (!countdown || !celebration) {
+  if (
+    !countdown ||
+    !celebration
+  ) {
+
     return;
+
   }
 
   celebration.classList.add(
@@ -2136,7 +2789,9 @@ function startFinalReveal() {
 
         number--;
 
-        if (number > 0) {
+        if (
+          number > 0
+        ) {
 
           countdown.textContent =
             number;
@@ -2156,11 +2811,13 @@ function startFinalReveal() {
           );
 
           launchConfetti();
+
         }
 
       },
       1000
     );
+
 }
 
 
@@ -2180,7 +2837,11 @@ function launchConfetti() {
     "⭐"
   ];
 
-  for (let i = 0; i < 100; i++) {
+  for (
+    let i = 0;
+    i < 100;
+    i++
+  ) {
 
     const confetti =
       document.createElement(
@@ -2199,14 +2860,21 @@ function launchConfetti() {
       ];
 
     confetti.style.left =
-      Math.random() * 100 + "vw";
+      Math.random() * 100 +
+      "vw";
 
     confetti.style.fontSize =
-      (10 + Math.random() * 16) +
+      (
+        10 +
+        Math.random() * 16
+      ) +
       "px";
 
     confetti.style.animationDuration =
-      (2.5 + Math.random() * 3) +
+      (
+        2.5 +
+        Math.random() * 3
+      ) +
       "s";
 
     confetti.style.animationDelay =
@@ -2218,10 +2886,13 @@ function launchConfetti() {
     );
 
     setTimeout(
-      () => confetti.remove(),
+      () =>
+        confetti.remove(),
       6500
     );
+
   }
+
 }
 
 
@@ -2236,14 +2907,17 @@ function openGift() {
       "giftBox"
     );
 
-  if (!gift) return;
+  if (!gift)
+    return;
 
   if (
     gift.classList.contains(
       "opened"
     )
   ) {
+
     return;
+
   }
 
   gift.classList.add(
@@ -2260,6 +2934,7 @@ function openGift() {
     hint.classList.add(
       "hidden"
     );
+
   }
 
   setTimeout(
@@ -2280,6 +2955,7 @@ function openGift() {
           behavior: "smooth",
           block: "center"
         });
+
       }
 
       launchConfetti();
@@ -2287,6 +2963,7 @@ function openGift() {
     },
     850
   );
+
 }
 
 
@@ -2296,23 +2973,31 @@ function openGift() {
 
 function restartJourney() {
 
-  currentScreenIndex = 0;
+  currentScreenIndex =
+    0;
 
-  quizIndex = 0;
+  quizIndex =
+    0;
 
   quizAnswers.fill("");
 
-  heartsCaught = 0;
+  heartsCaught =
+    0;
 
-  scratchInitialized = false;
+  scratchInitialized =
+    false;
 
-  scratchDone = false;
+  scratchDone =
+    false;
 
-  wheelSpinning = false;
+  wheelSpinning =
+    false;
 
-  wheelRotation = 0;
+  wheelRotation =
+    0;
 
-  heartGameStarted = false;
+  heartGameStarted =
+    false;
 
   if (heartTimer) {
 
@@ -2320,7 +3005,9 @@ function restartJourney() {
       heartTimer
     );
 
-    heartTimer = null;
+    heartTimer =
+      null;
+
   }
 
   const gift =
@@ -2368,6 +3055,7 @@ function restartJourney() {
     gift.classList.remove(
       "opened"
     );
+
   }
 
   if (giftReveal) {
@@ -2375,6 +3063,7 @@ function restartJourney() {
     giftReveal.classList.add(
       "hidden"
     );
+
   }
 
   if (giftHint) {
@@ -2382,6 +3071,7 @@ function restartJourney() {
     giftHint.classList.remove(
       "hidden"
     );
+
   }
 
   if (countdown) {
@@ -2389,6 +3079,7 @@ function restartJourney() {
     countdown.classList.remove(
       "hidden"
     );
+
   }
 
   if (celebration) {
@@ -2396,6 +3087,7 @@ function restartJourney() {
     celebration.classList.add(
       "hidden"
     );
+
   }
 
   if (spinButton) {
@@ -2403,6 +3095,7 @@ function restartJourney() {
     spinButton.classList.remove(
       "hidden"
     );
+
   }
 
   if (wheelContinue) {
@@ -2410,12 +3103,14 @@ function restartJourney() {
     wheelContinue.classList.add(
       "hidden"
     );
+
   }
 
   if (wheelResult) {
 
     wheelResult.textContent =
       "";
+
   }
 
   const letterEnvelope =
@@ -2433,6 +3128,7 @@ function restartJourney() {
     letterEnvelope.classList.remove(
       "opened"
     );
+
   }
 
   if (letterContent) {
@@ -2440,9 +3136,11 @@ function restartJourney() {
     letterContent.classList.add(
       "hidden"
     );
+
   }
 
   goTo("intro");
+
 }
 
 
@@ -2461,6 +3159,7 @@ function initializeBirthdayWebsite() {
   initJigsaw();
 
   initCodeInputs();
+
 }
 
 
@@ -2484,4 +3183,5 @@ if (
 } else {
 
   initializeBirthdayWebsite();
+
 }

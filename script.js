@@ -17,7 +17,8 @@ const journey = [
 
 let currentScreenIndex = 0;
 
-const BIRTHDAY = window.BIRTHDAY_DATA || {};
+const BIRTHDAY =
+  window.BIRTHDAY_DATA || {};
 
 const SECRET_CODE =
   BIRTHDAY.secret_code || "223010";
@@ -29,7 +30,8 @@ let scratchInitialized = false;
 let scratchDone = false;
 
 let quizIndex = 0;
-const quizAnswers = new Array(10).fill("");
+const quizAnswers =
+  new Array(10).fill("");
 
 let heartsCaught = 0;
 let heartTimer = null;
@@ -59,7 +61,7 @@ const CUSTOMER_PHOTOS =
 
 
 /* =====================================================
-   THEME + FONT
+   THEME
 ===================================================== */
 
 function applyCustomerTheme() {
@@ -131,10 +133,6 @@ function applyCustomerTheme() {
   );
 
 
-  /*
-     Add dynamic theme rules.
-  */
-
   const oldStyle =
     document.getElementById(
       "customer-theme-style"
@@ -143,6 +141,7 @@ function applyCustomerTheme() {
   if (oldStyle) {
     oldStyle.remove();
   }
+
 
   const style =
     document.createElement("style");
@@ -236,8 +235,6 @@ function applyCustomerFont() {
     fonts[CUSTOMER_FONT] ||
     fonts.romantic;
 
-  document.body.style.fontFamily =
-    selectedFont;
 
   const oldStyle =
     document.getElementById(
@@ -247,6 +244,7 @@ function applyCustomerFont() {
   if (oldStyle) {
     oldStyle.remove();
   }
+
 
   const style =
     document.createElement("style");
@@ -281,6 +279,7 @@ function applyBirthdayData() {
 
   if (!birthday) return;
 
+
   const name =
     birthday.birthday_name ||
     "Amma";
@@ -313,18 +312,17 @@ function applyBirthdayData() {
       "finalMessage"
     );
 
-  if (
-    finalMessage &&
-    birthday.final_message
-  ) {
+  if (finalMessage) {
 
-    finalMessage.innerHTML = `
-      <strong>
-        ${escapeHtml(
-          birthday.final_message
-        )}
-      </strong>
-    `;
+    const message =
+      birthday.final_message ||
+      `Happy Birthday ${name}! ❤️`;
+
+    finalMessage.textContent =
+      message;
+
+    finalMessage.style.whiteSpace =
+      "pre-line";
 
   }
 
@@ -336,23 +334,31 @@ function applyBirthdayData() {
       "dynamicLetterContent"
     );
 
-  if (
-    letterContent &&
-    birthday.letter
-  ) {
+  if (letterContent) {
 
-    letterContent.innerHTML = `
-      <p>
-        ${escapeHtml(
-          birthday.letter
-        ).replace(/\n/g, "<br>")}
-      </p>
-    `;
+    const letter =
+      birthday.letter ||
+      `Happy Birthday ${name}! ❤️`;
+
+    letterContent.innerHTML = "";
+
+    const paragraph =
+      document.createElement("p");
+
+    paragraph.textContent =
+      letter;
+
+    paragraph.style.whiteSpace =
+      "pre-line";
+
+    letterContent.appendChild(
+      paragraph
+    );
 
   }
 
 
-  /* APPLY CUSTOMER SETTINGS */
+  /* CUSTOMER SETTINGS */
 
   applyCustomerTheme();
 
@@ -373,6 +379,7 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+
 }
 
 
@@ -391,7 +398,11 @@ function createParticles() {
 
   container.innerHTML = "";
 
-  for (let i = 0; i < 45; i++) {
+  for (
+    let i = 0;
+    i < 45;
+    i++
+  ) {
 
     const particle =
       document.createElement("span");
@@ -423,7 +434,9 @@ function createParticles() {
     container.appendChild(
       particle
     );
+
   }
+
 }
 
 
@@ -443,6 +456,7 @@ function goTo(id) {
   currentScreenIndex =
     index;
 
+
   document
     .querySelectorAll(".screen")
     .forEach(screen => {
@@ -452,6 +466,7 @@ function goTo(id) {
       );
 
     });
+
 
   const screen =
     document.getElementById(id);
@@ -464,7 +479,9 @@ function goTo(id) {
 
   }
 
+
   updateJourneyProgress();
+
 
   window.scrollTo({
     top: 0,
@@ -504,15 +521,18 @@ function updateJourneyProgress() {
     (currentScreenIndex /
       (journey.length - 1)) * 100;
 
+
   const progressBar =
     document.getElementById(
       "journeyProgress"
     );
 
+
   const journeyText =
     document.getElementById(
       "journeyText"
     );
+
 
   if (progressBar) {
 
@@ -520,6 +540,7 @@ function updateJourneyProgress() {
       progress + "%";
 
   }
+
 
   if (journeyText) {
 
@@ -549,6 +570,7 @@ function initCodeInputs() {
       ".code-input"
     );
 
+
   codeInputs.forEach(
     (input, index) => {
 
@@ -561,6 +583,7 @@ function initCodeInputs() {
               /\D/g,
               ""
             );
+
 
           if (
             input.value &&
@@ -577,6 +600,7 @@ function initCodeInputs() {
         }
       );
 
+
       input.addEventListener(
         "keydown",
         event => {
@@ -592,6 +616,7 @@ function initCodeInputs() {
             ].focus();
 
           }
+
 
           if (
             event.key === "Enter"
@@ -617,6 +642,7 @@ function checkCode() {
       ".code-input"
     );
 
+
   const enteredCode =
     [...codeInputs]
       .map(
@@ -624,10 +650,12 @@ function checkCode() {
       )
       .join("");
 
+
   const error =
     document.getElementById(
       "codeError"
     );
+
 
   if (
     enteredCode ===
@@ -643,6 +671,7 @@ function checkCode() {
         "var(--customer-accent, #f4d28a)";
 
     }
+
 
     codeInputs.forEach(
       (input, index) => {
@@ -666,6 +695,7 @@ function checkCode() {
       }
     );
 
+
     setTimeout(
       () => {
 
@@ -677,6 +707,7 @@ function checkCode() {
       900
     );
 
+
   } else {
 
     if (error) {
@@ -685,6 +716,7 @@ function checkCode() {
         "Hmm... that's not it. Try again ❤️";
 
     }
+
 
     codeInputs.forEach(
       input => {
@@ -757,6 +789,7 @@ function initJigsaw() {
 
   selectedPuzzlePiece = null;
 
+
   for (
     let correctPosition = 0;
     correctPosition < 9;
@@ -772,6 +805,7 @@ function initJigsaw() {
     piece.dataset.correct =
       correctPosition;
 
+
     const row =
       Math.floor(
         correctPosition / 3
@@ -780,11 +814,14 @@ function initJigsaw() {
     const col =
       correctPosition % 3;
 
+
     piece.style.backgroundSize =
       "300% 300%";
 
+
     piece.style.backgroundPosition =
       `${col * 50}% ${row * 50}%`;
+
 
     piece.addEventListener(
       "click",
@@ -792,30 +829,34 @@ function initJigsaw() {
         selectJigsawPiece(piece)
     );
 
+
     puzzlePieces.push(piece);
 
   }
 
-  applyPuzzleImage();
 
   shuffleJigsaw();
+
+  applyPuzzleImage();
 
 }
 
 
 async function applyPuzzleImage() {
 
-  const firstPhoto =
-    CUSTOMER_PHOTOS[0];
+  if (!CUSTOMER_PHOTOS.length) {
+    return;
+  }
 
-  if (!firstPhoto) return;
 
   const url =
     await getPhotoUrl(
-      firstPhoto
+      CUSTOMER_PHOTOS[0]
     );
 
+
   if (!url) return;
+
 
   document
     .querySelectorAll(
@@ -825,6 +866,9 @@ async function applyPuzzleImage() {
 
       piece.style.backgroundImage =
         `url("${url}")`;
+
+      piece.style.backgroundSize =
+        "300% 300%";
 
     });
 
@@ -848,6 +892,7 @@ function selectJigsawPiece(piece) {
 
   }
 
+
   if (
     selectedPuzzlePiece === piece
   ) {
@@ -863,15 +908,18 @@ function selectJigsawPiece(piece) {
 
   }
 
+
   const firstIndex =
     puzzlePieces.indexOf(
       selectedPuzzlePiece
     );
 
+
   const secondIndex =
     puzzlePieces.indexOf(
       piece
     );
+
 
   [
     puzzlePieces[firstIndex],
@@ -881,17 +929,21 @@ function selectJigsawPiece(piece) {
     puzzlePieces[firstIndex]
   ];
 
+
   const board =
     document.getElementById(
       "jigsawBoard"
     );
 
+
   board.innerHTML = "";
+
 
   puzzlePieces.forEach(
     p =>
       board.appendChild(p)
   );
+
 
   selectedPuzzlePiece.classList.remove(
     "selected"
@@ -901,8 +953,10 @@ function selectJigsawPiece(piece) {
     "selected"
   );
 
+
   selectedPuzzlePiece =
     null;
+
 
   checkJigsaw();
 
@@ -916,6 +970,7 @@ function shuffleJigsaw() {
       "jigsawBoard"
     );
 
+
   if (
     !board ||
     puzzlePieces.length === 0
@@ -925,8 +980,10 @@ function shuffleJigsaw() {
 
   }
 
+
   selectedPuzzlePiece =
     null;
+
 
   puzzlePieces.forEach(
     piece =>
@@ -934,6 +991,7 @@ function shuffleJigsaw() {
         "selected"
       )
   );
+
 
   for (
     let i =
@@ -947,6 +1005,7 @@ function shuffleJigsaw() {
         Math.random() * (i + 1)
       );
 
+
     [
       puzzlePieces[i],
       puzzlePieces[j]
@@ -957,12 +1016,15 @@ function shuffleJigsaw() {
 
   }
 
+
   board.innerHTML = "";
+
 
   puzzlePieces.forEach(
     piece =>
       board.appendChild(piece)
   );
+
 
   if (isJigsawSolved()) {
 
@@ -971,6 +1033,7 @@ function shuffleJigsaw() {
     return;
 
   }
+
 
   updatePuzzleStatus();
 
@@ -985,6 +1048,7 @@ function isJigsawSolved() {
         ".jigsaw-piece"
       )
     ];
+
 
   return pieces.every(
     (piece, index) =>
@@ -1005,7 +1069,9 @@ function updatePuzzleStatus() {
       )
     ];
 
+
   let correct = 0;
+
 
   pieces.forEach(
     (piece, index) => {
@@ -1014,6 +1080,7 @@ function updatePuzzleStatus() {
         Number(
           piece.dataset.correct
         ) === index;
+
 
       if (isCorrect) {
 
@@ -1034,10 +1101,12 @@ function updatePuzzleStatus() {
     }
   );
 
+
   const status =
     document.getElementById(
       "puzzleStatus"
     );
+
 
   if (status) {
 
@@ -1053,12 +1122,14 @@ function checkJigsaw() {
 
   updatePuzzleStatus();
 
+
   if (isJigsawSolved()) {
 
     const status =
       document.getElementById(
         "puzzleStatus"
       );
+
 
     if (status) {
 
@@ -1067,10 +1138,12 @@ function checkJigsaw() {
 
     }
 
+
     const continueButton =
       document.getElementById(
         "puzzleContinue"
       );
+
 
     if (continueButton) {
 
@@ -1079,6 +1152,7 @@ function checkJigsaw() {
       );
 
     }
+
 
     document
       .querySelectorAll(
@@ -1124,24 +1198,30 @@ function initScratchCard() {
   if (scratchInitialized)
     return;
 
+
   const canvas =
     document.getElementById(
       "scratchCanvas"
     );
+
 
   const container =
     document.querySelector(
       ".scratch-container"
     );
 
+
   if (!canvas || !container)
     return;
+
 
   scratchInitialized =
     true;
 
+
   const rect =
     container.getBoundingClientRect();
+
 
   const dpr =
     Math.max(
@@ -1149,26 +1229,33 @@ function initScratchCard() {
       window.devicePixelRatio || 1
     );
 
+
   canvas.width =
     Math.floor(
       rect.width * dpr
     );
+
 
   canvas.height =
     Math.floor(
       rect.height * dpr
     );
 
+
   const ctx =
     canvas.getContext("2d");
 
+
   ctx.scale(dpr, dpr);
+
 
   const width =
     rect.width;
 
+
   const height =
     rect.height;
+
 
   const gradient =
     ctx.createLinearGradient(
@@ -1177,6 +1264,7 @@ function initScratchCard() {
       width,
       height
     );
+
 
   gradient.addColorStop(
     0,
@@ -1203,8 +1291,10 @@ function initScratchCard() {
     "#b9a77f"
   );
 
+
   ctx.fillStyle =
     gradient;
+
 
   ctx.fillRect(
     0,
@@ -1213,10 +1303,12 @@ function initScratchCard() {
     height
   );
 
+
   for (let i = 0; i < 70; i++) {
 
     ctx.fillStyle =
       `rgba(255,255,255,${0.03 + Math.random() * 0.07})`;
+
 
     ctx.fillRect(
       Math.random() * width,
@@ -1227,14 +1319,18 @@ function initScratchCard() {
 
   }
 
+
   ctx.fillStyle =
     "rgba(80,60,30,0.28)";
+
 
   ctx.font =
     "700 24px Fredoka";
 
+
   ctx.textAlign =
     "center";
+
 
   ctx.fillText(
     "SCRATCH ME ❤️",
@@ -1242,10 +1338,13 @@ function initScratchCard() {
     height / 2
   );
 
+
   ctx.globalCompositeOperation =
     "destination-out";
 
+
   let scratching = false;
+
 
   function scratch(event) {
 
@@ -1258,11 +1357,14 @@ function initScratchCard() {
 
     }
 
+
     const bounds =
       canvas.getBoundingClientRect();
 
+
     let clientX;
     let clientY;
+
 
     if (
       event.touches &&
@@ -1285,23 +1387,29 @@ function initScratchCard() {
 
     }
 
+
     const scaleX =
       canvas.width /
       bounds.width;
+
 
     const scaleY =
       canvas.height /
       bounds.height;
 
+
     const x =
       (clientX - bounds.left) *
       scaleX;
+
 
     const y =
       (clientY - bounds.top) *
       scaleY;
 
+
     ctx.beginPath();
+
 
     ctx.arc(
       x,
@@ -1311,27 +1419,14 @@ function initScratchCard() {
       Math.PI * 2
     );
 
+
     ctx.fill();
+
 
     checkScratchPercentage();
 
   }
 
-  canvas.addEventListener(
-    "touchstart",
-    e => e.preventDefault(),
-    {
-      passive: false
-    }
-  );
-
-  canvas.addEventListener(
-    "touchmove",
-    e => e.preventDefault(),
-    {
-      passive: false
-    }
-  );
 
   canvas.addEventListener(
     "pointerdown",
@@ -1348,16 +1443,19 @@ function initScratchCard() {
     }
   );
 
+
   canvas.addEventListener(
     "pointermove",
     scratch
   );
+
 
   canvas.addEventListener(
     "pointerup",
     () =>
       scratching = false
   );
+
 
   canvas.addEventListener(
     "pointercancel",
@@ -1373,25 +1471,32 @@ function checkScratchPercentage() {
   if (scratchDone)
     return;
 
+
   const canvas =
     document.getElementById(
       "scratchCanvas"
     );
 
+
   if (!canvas)
     return;
+
 
   const ctx =
     canvas.getContext("2d");
 
+
   const width =
     canvas.width;
+
 
   const height =
     canvas.height;
 
+
   const sampleSize =
     5000;
+
 
   const imageData =
     ctx.getImageData(
@@ -1401,8 +1506,10 @@ function checkScratchPercentage() {
       height
     ).data;
 
+
   let transparent = 0;
   let samples = 0;
+
 
   const step =
     Math.max(
@@ -1414,6 +1521,7 @@ function checkScratchPercentage() {
         )
       )
     );
+
 
   for (
     let y = 0;
@@ -1430,6 +1538,7 @@ function checkScratchPercentage() {
       const index =
         (y * width + x) * 4;
 
+
       if (
         imageData[index + 3] < 80
       ) {
@@ -1438,26 +1547,31 @@ function checkScratchPercentage() {
 
       }
 
+
       samples++;
 
     }
 
   }
 
+
   const percentage =
     Math.round(
       (transparent / samples) * 100
     );
+
 
   const progress =
     document.getElementById(
       "scratchProgress"
     );
 
+
   const percentText =
     document.getElementById(
       "scratchPercent"
     );
+
 
   if (progress) {
 
@@ -1469,6 +1583,7 @@ function checkScratchPercentage() {
 
   }
 
+
   if (percentText) {
 
     percentText.textContent =
@@ -1478,9 +1593,11 @@ function checkScratchPercentage() {
 
   }
 
+
   if (percentage >= 25) {
 
     scratchDone = true;
+
 
     if (progress) {
 
@@ -1489,10 +1606,12 @@ function checkScratchPercentage() {
 
     }
 
+
     const continueButton =
       document.getElementById(
         "scratchContinue"
       );
+
 
     if (continueButton) {
 
@@ -1501,6 +1620,7 @@ function checkScratchPercentage() {
       );
 
     }
+
 
     setTimeout(
       () => {
@@ -1530,6 +1650,7 @@ const questions = [
   {
     text:
       "The day you married Thaththa, did you think he would be this annoying? 😂❤️",
+
     options: [
       "Yes 😂",
       "No 😇",
@@ -1540,6 +1661,7 @@ const questions = [
   {
     text:
       "Who do you love the most? 👀❤️",
+
     options: [
       "Thaththa 😂",
       "Loku Doni 🥰",
@@ -1551,6 +1673,7 @@ const questions = [
   {
     text:
       "Who makes you laugh the most? 😂",
+
     options: [
       "Thaththa",
       "Loku Doni",
@@ -1562,6 +1685,7 @@ const questions = [
   {
     text:
       "Who is the most naughty? 😈😂",
+
     options: [
       "Thaththa",
       "Loku Doni",
@@ -1573,6 +1697,7 @@ const questions = [
   {
     text:
       "Who do you think loves you the most? 👀❤️",
+
     options: [
       "Loku Doni",
       "Chooty Doni",
@@ -1584,6 +1709,7 @@ const questions = [
   {
     text:
       "Who gives the best hugs? 🤗❤️",
+
     options: [
       "Thaththa",
       "Loku Doni",
@@ -1594,6 +1720,7 @@ const questions = [
   {
     text:
       "Who is your best friend in the family? 👀😂❤️",
+
     options: [
       "Thaththa",
       "Loku Doni",
@@ -1605,18 +1732,21 @@ const questions = [
   {
     text:
       "If you could describe our family in three words, what would they be? ❤️",
+
     open: true
   },
 
   {
     text:
       "If our family had a movie, what would you name it? 🎬😂❤️",
+
     open: true
   },
 
   {
     text:
       "What is your favourite family memory that you will never forget? ❤️",
+
     open: true
   }
 
@@ -1631,25 +1761,30 @@ function renderQuestion() {
   if (!question)
     return;
 
+
   const questionNumber =
     document.getElementById(
       "questionNumber"
     );
+
 
   const questionProgress =
     document.getElementById(
       "questionProgress"
     );
 
+
   const questionText =
     document.getElementById(
       "questionText"
     );
 
+
   const area =
     document.getElementById(
       "answerArea"
     );
+
 
   if (questionNumber) {
 
@@ -1658,12 +1793,14 @@ function renderQuestion() {
 
   }
 
+
   if (questionProgress) {
 
     questionProgress.style.width =
       `${((quizIndex + 1) / 10) * 100}%`;
 
   }
+
 
   if (questionText) {
 
@@ -1672,10 +1809,13 @@ function renderQuestion() {
 
   }
 
+
   if (!area)
     return;
 
+
   area.innerHTML = "";
+
 
   if (question.open) {
 
@@ -1684,14 +1824,18 @@ function renderQuestion() {
         "textarea"
       );
 
+
     textarea.className =
       "open-answer";
+
 
     textarea.placeholder =
       "Write your answer here... ❤️";
 
+
     textarea.value =
       quizAnswers[quizIndex] || "";
+
 
     textarea.addEventListener(
       "input",
@@ -1703,9 +1847,11 @@ function renderQuestion() {
       }
     );
 
+
     area.appendChild(
       textarea
     );
+
 
   } else {
 
@@ -1714,8 +1860,10 @@ function renderQuestion() {
         "div"
       );
 
+
     answers.className =
       "answers";
+
 
     question.options.forEach(
       (option, index) => {
@@ -1725,8 +1873,10 @@ function renderQuestion() {
             "button"
           );
 
+
         button.className =
           "answer-card";
+
 
         if (
           quizAnswers[quizIndex] ===
@@ -1739,6 +1889,7 @@ function renderQuestion() {
 
         }
 
+
         button.innerHTML = `
           <span class="answer-letter">
             ${String.fromCharCode(
@@ -1747,6 +1898,7 @@ function renderQuestion() {
           </span>
           ${escapeHtml(option)}
         `;
+
 
         button.addEventListener(
           "click",
@@ -1757,6 +1909,7 @@ function renderQuestion() {
             )
         );
 
+
         answers.appendChild(
           button
         );
@@ -1764,21 +1917,25 @@ function renderQuestion() {
       }
     );
 
+
     area.appendChild(
       answers
     );
 
   }
 
+
   const previous =
     document.getElementById(
       "previousQuestion"
     );
 
+
   const next =
     document.getElementById(
       "nextQuestion"
     );
+
 
   if (previous) {
 
@@ -1788,6 +1945,7 @@ function renderQuestion() {
         : "visible";
 
   }
+
 
   if (next) {
 
@@ -1809,6 +1967,7 @@ function selectAnswer(
   quizAnswers[quizIndex] =
     answer;
 
+
   document
     .querySelectorAll(
       ".answer-card"
@@ -1820,9 +1979,11 @@ function selectAnswer(
         )
     );
 
+
   button.classList.add(
     "selected"
   );
+
 
   setTimeout(
     () => {
@@ -1847,12 +2008,14 @@ function nextQuestion() {
       ".open-answer"
     );
 
+
   if (textarea) {
 
     quizAnswers[quizIndex] =
       textarea.value;
 
   }
+
 
   if (quizIndex < 9) {
 
@@ -1878,12 +2041,14 @@ function previousQuestion() {
         ".open-answer"
       );
 
+
     if (textarea) {
 
       quizAnswers[quizIndex] =
         textarea.value;
 
     }
+
 
     quizIndex--;
 
@@ -1905,9 +2070,10 @@ async function getPhotoUrl(
   if (!photoPath)
     return null;
 
+
   /*
-     If dashboard ever stores a complete URL,
-     use it directly.
+     If dashboard stores
+     a complete URL.
   */
 
   if (
@@ -1924,10 +2090,6 @@ async function getPhotoUrl(
   }
 
 
-  /*
-     For Supabase Storage.
-  */
-
   try {
 
     const {
@@ -1942,13 +2104,14 @@ async function getPhotoUrl(
           3600
         );
 
+
     if (
       error ||
       !data ||
       !data.signedUrl
     ) {
 
-      console.warn(
+      console.error(
         "Photo URL error:",
         error
       );
@@ -1957,11 +2120,13 @@ async function getPhotoUrl(
 
     }
 
+
     return data.signedUrl;
+
 
   } catch (error) {
 
-    console.warn(
+    console.error(
       "Photo loading error:",
       error
     );
@@ -1984,21 +2149,16 @@ async function renderMemories() {
       "memoryGrid"
     );
 
+
   if (!grid)
     return;
 
-
-  /*
-     IMPORTANT:
-     Remove the old hard-coded
-     38 photos.
-  */
 
   grid.innerHTML = "";
 
 
   /*
-     If customer has no photos.
+     No customer photos.
   */
 
   if (
@@ -2010,15 +2170,19 @@ async function renderMemories() {
         "div"
       );
 
+
     empty.className =
       "memory-empty";
+
 
     empty.innerHTML = `
       <div style="
         padding:40px 20px;
         text-align:center;
         opacity:.8;
+        width:100%;
       ">
+
         <div style="
           font-size:48px;
           margin-bottom:15px;
@@ -2027,14 +2191,17 @@ async function renderMemories() {
         </div>
 
         <p>
-          Our beautiful memories ❤️
+          No memories uploaded yet ❤️
         </p>
+
       </div>
     `;
+
 
     grid.appendChild(
       empty
     );
+
 
     return;
 
@@ -2054,18 +2221,22 @@ async function renderMemories() {
     const path =
       CUSTOMER_PHOTOS[i];
 
+
     const url =
       await getPhotoUrl(
         path
       );
 
+
     if (!url)
       continue;
+
 
     const card =
       document.createElement(
         "figure"
       );
+
 
     card.className =
       "memory-card";
@@ -2076,11 +2247,14 @@ async function renderMemories() {
         "img"
       );
 
+
     image.src =
       url;
 
+
     image.alt =
       `Memory ${i + 1}`;
+
 
     image.loading =
       "lazy";
@@ -2091,8 +2265,10 @@ async function renderMemories() {
         "div"
       );
 
+
     overlay.className =
       "memory-overlay";
+
 
     overlay.textContent =
       `Memory ${String(
@@ -2106,6 +2282,7 @@ async function renderMemories() {
     card.appendChild(
       image
     );
+
 
     card.appendChild(
       overlay
@@ -2148,18 +2325,22 @@ function openLightbox(
       "lightbox"
     );
 
+
   if (!lightbox)
     return;
+
 
   const lightboxImage =
     document.getElementById(
       "lightboxImage"
     );
 
+
   const lightboxCaption =
     document.getElementById(
       "lightboxCaption"
     );
+
 
   if (lightboxImage) {
 
@@ -2168,12 +2349,14 @@ function openLightbox(
 
   }
 
+
   if (lightboxCaption) {
 
     lightboxCaption.textContent =
       caption || "";
 
   }
+
 
   lightbox.classList.add(
     "active",
@@ -2190,8 +2373,10 @@ function closeLightbox(event) {
       "lightbox"
     );
 
+
   if (!lightbox)
     return;
+
 
   if (
     !event ||
@@ -2239,22 +2424,27 @@ function startHeartGame() {
 
   goTo("hearts");
 
+
   heartsCaught = 0;
 
   heartGameStarted =
     false;
 
+
   updateHeartScore();
+
 
   const message =
     document.getElementById(
       "heartMessage"
     );
 
+
   const continueButton =
     document.getElementById(
       "heartContinue"
     );
+
 
   if (message) {
 
@@ -2263,6 +2453,7 @@ function startHeartGame() {
 
   }
 
+
   if (continueButton) {
 
     continueButton.classList.add(
@@ -2270,6 +2461,7 @@ function startHeartGame() {
     );
 
   }
+
 
   setTimeout(
     () => {
@@ -2293,10 +2485,12 @@ function updateHeartScore() {
       "heartScore"
     );
 
+
   const progress =
     document.getElementById(
       "heartProgress"
     );
+
 
   if (score) {
 
@@ -2304,6 +2498,7 @@ function updateHeartScore() {
       heartsCaught;
 
   }
+
 
   if (progress) {
 
@@ -2325,7 +2520,9 @@ function startHeartSpawner() {
 
   }
 
+
   spawnHeart();
+
 
   heartTimer =
     setInterval(
@@ -2343,6 +2540,7 @@ function startHeartSpawner() {
 
         }
 
+
         spawnHeart();
 
       },
@@ -2359,6 +2557,7 @@ function spawnHeart() {
       "heartArena"
     );
 
+
   if (
     !arena ||
     heartsCaught >= 5
@@ -2368,13 +2567,16 @@ function spawnHeart() {
 
   }
 
+
   const heart =
     document.createElement(
       "button"
     );
 
+
   heart.className =
     "game-heart";
+
 
   heart.textContent =
     [
@@ -2388,11 +2590,14 @@ function spawnHeart() {
       )
     ];
 
+
   const arenaWidth =
     arena.clientWidth;
 
+
   const arenaHeight =
     arena.clientHeight;
+
 
   const left =
     15 +
@@ -2402,6 +2607,7 @@ function spawnHeart() {
         arenaWidth - 80
       );
 
+
   const top =
     15 +
     Math.random() *
@@ -2410,17 +2616,21 @@ function spawnHeart() {
         arenaHeight - 85
       );
 
+
   heart.style.left =
     left + "px";
 
+
   heart.style.top =
     top + "px";
+
 
   heart.addEventListener(
     "pointerdown",
     event => {
 
       event.preventDefault();
+
 
       if (
         !heartGameStarted
@@ -2430,14 +2640,17 @@ function spawnHeart() {
 
       }
 
+
       catchHeart(heart);
 
     }
   );
 
+
   arena.appendChild(
     heart
   );
+
 
   setTimeout(
     () => {
@@ -2465,14 +2678,19 @@ function catchHeart(heart) {
 
   }
 
+
   heart.dataset.caught =
     "true";
 
+
   heartsCaught++;
+
 
   heart.remove();
 
+
   updateHeartScore();
+
 
   if (
     heartsCaught >= 5
@@ -2480,6 +2698,7 @@ function catchHeart(heart) {
 
     heartGameStarted =
       false;
+
 
     if (heartTimer) {
 
@@ -2489,15 +2708,18 @@ function catchHeart(heart) {
 
     }
 
+
     const message =
       document.getElementById(
         "heartMessage"
       );
 
+
     const continueButton =
       document.getElementById(
         "heartContinue"
       );
+
 
     if (message) {
 
@@ -2505,6 +2727,7 @@ function catchHeart(heart) {
         "You caught all the love! ❤️🎉";
 
     }
+
 
     if (continueButton) {
 
@@ -2520,6 +2743,7 @@ function catchHeart(heart) {
       document.getElementById(
         "heartMessage"
       );
+
 
     if (message) {
 
@@ -2563,28 +2787,34 @@ function spinWheel() {
   if (wheelSpinning)
     return;
 
+
   wheelSpinning =
     true;
+
 
   const wheel =
     document.getElementById(
       "loveWheel"
     );
 
+
   const result =
     document.getElementById(
       "wheelResult"
     );
+
 
   const spinButton =
     document.getElementById(
       "spinButton"
     );
 
+
   const continueButton =
     document.getElementById(
       "wheelContinue"
     );
+
 
   if (!wheel) {
 
@@ -2595,6 +2825,7 @@ function spinWheel() {
 
   }
 
+
   if (result) {
 
     result.textContent =
@@ -2602,16 +2833,19 @@ function spinWheel() {
 
   }
 
+
   const resultIndex =
     Math.floor(
       Math.random() *
       wheelResults.length
     );
 
+
   const segmentCenter =
     resultIndex *
       45 +
     22.5;
+
 
   const extraSpins =
     360 *
@@ -2622,15 +2856,19 @@ function spinWheel() {
       )
     );
 
+
   const target =
     extraSpins +
     (360 - segmentCenter);
 
+
   wheelRotation +=
     target;
 
+
   wheel.style.transform =
     `rotate(${wheelRotation}deg)`;
+
 
   setTimeout(
     () => {
@@ -2644,6 +2882,7 @@ function spinWheel() {
 
       }
 
+
       if (spinButton) {
 
         spinButton.classList.add(
@@ -2652,6 +2891,7 @@ function spinWheel() {
 
       }
 
+
       if (continueButton) {
 
         continueButton.classList.remove(
@@ -2659,6 +2899,7 @@ function spinWheel() {
         );
 
       }
+
 
       wheelSpinning =
         false;
@@ -2684,15 +2925,18 @@ function openEnvelope(type) {
 
   }
 
+
   const envelope =
     document.getElementById(
       "letterEnvelope"
     );
 
+
   const letter =
     document.getElementById(
       "letterContent"
     );
+
 
   if (
     !envelope ||
@@ -2702,6 +2946,7 @@ function openEnvelope(type) {
     return;
 
   }
+
 
   if (
     envelope.classList.contains(
@@ -2713,9 +2958,11 @@ function openEnvelope(type) {
 
   }
 
+
   envelope.classList.add(
     "opened"
   );
+
 
   setTimeout(
     () => {
@@ -2723,6 +2970,7 @@ function openEnvelope(type) {
       letter.classList.remove(
         "hidden"
       );
+
 
       setTimeout(
         () => {
@@ -2751,15 +2999,18 @@ function startFinalReveal() {
 
   goTo("final");
 
+
   const countdown =
     document.getElementById(
       "countdown"
     );
 
+
   const celebration =
     document.getElementById(
       "birthdayCelebration"
     );
+
 
   if (
     !countdown ||
@@ -2770,24 +3021,30 @@ function startFinalReveal() {
 
   }
 
+
   celebration.classList.add(
     "hidden"
   );
+
 
   countdown.classList.remove(
     "hidden"
   );
 
+
   let number = 3;
+
 
   countdown.textContent =
     number;
+
 
   const timer =
     setInterval(
       () => {
 
         number--;
+
 
         if (
           number > 0
@@ -2802,13 +3059,16 @@ function startFinalReveal() {
             timer
           );
 
+
           countdown.classList.add(
             "hidden"
           );
 
+
           celebration.classList.remove(
             "hidden"
           );
+
 
           launchConfetti();
 
@@ -2837,6 +3097,7 @@ function launchConfetti() {
     "⭐"
   ];
 
+
   for (
     let i = 0;
     i < 100;
@@ -2848,8 +3109,10 @@ function launchConfetti() {
         "span"
       );
 
+
     confetti.className =
       "confetti";
+
 
     confetti.textContent =
       symbols[
@@ -2859,9 +3122,11 @@ function launchConfetti() {
         )
       ];
 
+
     confetti.style.left =
       Math.random() * 100 +
       "vw";
+
 
     confetti.style.fontSize =
       (
@@ -2870,6 +3135,7 @@ function launchConfetti() {
       ) +
       "px";
 
+
     confetti.style.animationDuration =
       (
         2.5 +
@@ -2877,13 +3143,16 @@ function launchConfetti() {
       ) +
       "s";
 
+
     confetti.style.animationDelay =
       Math.random() * 1.5 +
       "s";
 
+
     document.body.appendChild(
       confetti
     );
+
 
     setTimeout(
       () =>
@@ -2907,8 +3176,10 @@ function openGift() {
       "giftBox"
     );
 
+
   if (!gift)
     return;
+
 
   if (
     gift.classList.contains(
@@ -2920,14 +3191,17 @@ function openGift() {
 
   }
 
+
   gift.classList.add(
     "opened"
   );
+
 
   const hint =
     document.getElementById(
       "giftHint"
     );
+
 
   if (hint) {
 
@@ -2937,6 +3211,7 @@ function openGift() {
 
   }
 
+
   setTimeout(
     () => {
 
@@ -2945,11 +3220,13 @@ function openGift() {
           "giftReveal"
         );
 
+
       if (reveal) {
 
         reveal.classList.remove(
           "hidden"
         );
+
 
         reveal.scrollIntoView({
           behavior: "smooth",
@@ -2957,6 +3234,7 @@ function openGift() {
         });
 
       }
+
 
       launchConfetti();
 
@@ -2976,28 +3254,37 @@ function restartJourney() {
   currentScreenIndex =
     0;
 
+
   quizIndex =
     0;
 
+
   quizAnswers.fill("");
+
 
   heartsCaught =
     0;
 
+
   scratchInitialized =
     false;
+
 
   scratchDone =
     false;
 
+
   wheelSpinning =
     false;
+
 
   wheelRotation =
     0;
 
+
   heartGameStarted =
     false;
+
 
   if (heartTimer) {
 
@@ -3005,50 +3292,60 @@ function restartJourney() {
       heartTimer
     );
 
+
     heartTimer =
       null;
 
   }
+
 
   const gift =
     document.getElementById(
       "giftBox"
     );
 
+
   const giftReveal =
     document.getElementById(
       "giftReveal"
     );
+
 
   const giftHint =
     document.getElementById(
       "giftHint"
     );
 
+
   const countdown =
     document.getElementById(
       "countdown"
     );
+
 
   const celebration =
     document.getElementById(
       "birthdayCelebration"
     );
 
+
   const spinButton =
     document.getElementById(
       "spinButton"
     );
+
 
   const wheelContinue =
     document.getElementById(
       "wheelContinue"
     );
 
+
   const wheelResult =
     document.getElementById(
       "wheelResult"
     );
+
 
   if (gift) {
 
@@ -3058,6 +3355,7 @@ function restartJourney() {
 
   }
 
+
   if (giftReveal) {
 
     giftReveal.classList.add(
@@ -3065,6 +3363,7 @@ function restartJourney() {
     );
 
   }
+
 
   if (giftHint) {
 
@@ -3074,6 +3373,7 @@ function restartJourney() {
 
   }
 
+
   if (countdown) {
 
     countdown.classList.remove(
@@ -3081,6 +3381,7 @@ function restartJourney() {
     );
 
   }
+
 
   if (celebration) {
 
@@ -3090,6 +3391,7 @@ function restartJourney() {
 
   }
 
+
   if (spinButton) {
 
     spinButton.classList.remove(
@@ -3097,6 +3399,7 @@ function restartJourney() {
     );
 
   }
+
 
   if (wheelContinue) {
 
@@ -3106,6 +3409,7 @@ function restartJourney() {
 
   }
 
+
   if (wheelResult) {
 
     wheelResult.textContent =
@@ -3113,15 +3417,18 @@ function restartJourney() {
 
   }
 
+
   const letterEnvelope =
     document.getElementById(
       "letterEnvelope"
     );
 
+
   const letterContent =
     document.getElementById(
       "letterContent"
     );
+
 
   if (letterEnvelope) {
 
@@ -3131,6 +3438,7 @@ function restartJourney() {
 
   }
 
+
   if (letterContent) {
 
     letterContent.classList.add(
@@ -3138,6 +3446,7 @@ function restartJourney() {
     );
 
   }
+
 
   goTo("intro");
 
@@ -3148,23 +3457,68 @@ function restartJourney() {
    INITIALIZE
 ===================================================== */
 
-function initializeBirthdayWebsite() {
+async function initializeBirthdayWebsite() {
+
+  /*
+     Load customer data
+  */
 
   applyBirthdayData();
 
+
+  /*
+     Background particles
+  */
+
   createParticles();
+
+
+  /*
+     Journey progress
+  */
 
   updateJourneyProgress();
 
-  initJigsaw();
+
+  /*
+     Secret code inputs
+  */
 
   initCodeInputs();
+
+
+  /*
+     Create puzzle
+  */
+
+  initJigsaw();
+
+
+  /*
+     Load customer memories
+  */
+
+  await renderMemories();
+
+
+  /*
+     Apply first customer photo
+     to the puzzle
+  */
+
+  await applyPuzzleImage();
 
 }
 
 
+/* =====================================================
+   START
+===================================================== */
+
 /*
-   script.js is loaded dynamically by index.html.
+   script.js is loaded dynamically
+   by index.html after Supabase
+   data has been loaded.
 */
 
 if (
